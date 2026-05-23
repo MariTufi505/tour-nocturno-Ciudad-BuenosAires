@@ -9,24 +9,27 @@
 
     <!-- ===== HEADER / NAV PRINCIPAL ===== -->
     <header class="site-header">
-      <a href="/" class="brand" aria-label="Ir al inicio">
+      <a href="/" class="brand" aria-label="Ir al inicio — Secretos de la Ciudad">
         <span class="brand__icon" aria-hidden="true"></span>
         <span class="brand__name">
           <strong>Secretos</strong>
           <span>de la Ciudad</span>
         </span>
       </a>
-      <!-- ===== Navegación Inicio/Explorar/Mapa/sobre Nosotros ===== -->
+
+      <!-- ===== Navegación principal ===== -->
       <nav class="main-nav" aria-label="Navegación principal">
-        <ul class="main-nav__list" role="list">
-          <li><a href="/"    class="main-nav__link">Inicio</a></li>
+        <ul class="main-nav__list">
+          <li><a href="/" class="main-nav__link">Inicio</a></li>
           <li><a href="/" class="main-nav__link main-nav__link--active" aria-current="page">Explorar</a></li>
-          <li><a href="/"     class="main-nav__link">Mapa</a></li>
+          <li><a href="/" class="main-nav__link">Mapa</a></li>
           <li><a href="/" class="main-nav__link">Sobre nosotros</a></li>
         </ul>
       </nav>
-      <!-- =====  Barra de Búsqueda ===== -->
-      <search class="site-search" role="search">
+
+      <!-- ===== Barra de búsqueda ===== -->
+      
+      <form class="site-search" role="search" action="#" method="get">
         <label for="search-input" class="sr-only">Buscar lugares</label>
         <input
           id="search-input"
@@ -35,11 +38,14 @@
           class="site-search__input"
           placeholder="Buscar lugares..."
           autocomplete="off"
+          aria-label="Buscar lugares"
         />
         <button type="submit" class="site-search__btn" aria-label="Buscar">
-            <span class="icon icon--search" aria-hidden="true"></span>
+          <span class="icon icon--search" aria-hidden="true"></span>
         </button>
-      </search>
+      </form>
+
+    </header>
 
       <main class="site-layout">
           <!-- ===== SIDEBAR IZQUIERDO (Progreso, lugares, guardados, recientes)===== -->
