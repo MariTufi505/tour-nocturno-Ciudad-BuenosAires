@@ -41,58 +41,168 @@
         </button>
       </search>
 
-      <!-- ===== SIDEBAR IZQUIERDO (Progreso, lugares, guardados, recientes)===== -->
-      <aside class="sidebar" aria-label="Panel del explorador">
-
-        <!-- Progreso del usuario -->
+      <main class="site-layout">
+          <!-- ===== SIDEBAR IZQUIERDO (Progreso, lugares, guardados, recientes)===== -->
+          <aside class="sidebar" aria-label="Panel del explorador">
+              
+              <!-- Progreso del usuario -->
         <section class="progress-panel" aria-labelledby="progress-title">
           <h2 id="progress-title" class="progress-panel__title">Tu progreso</h2>
         </section>
 
         <!-- Listas del usuario -->
         <nav class="user-lists" aria-label="Mis listas">
-          <ul class="user-lists__list" role="list">
-            <li class="user-lists__item">
-              <a href="/guardados" class="user-lists__link">
-                <span class="icon icon--bookmark" aria-hidden="true"></span>
+            <ul class="user-lists__list" role="list">
+                <li class="user-lists__item">
+                    <a href="/guardados" class="user-lists__link">
+                        <span class="icon icon--bookmark" aria-hidden="true"></span>
                 <span class="user-lists__label">Guardados</span>
                 <small class="user-lists__count" data-saved-count></small>
-              </a>
+            </a>
             </li>
             <li class="user-lists__item">
-              <a href="/por-visitar" class="user-lists__link">
+                <a href="/por-visitar" class="user-lists__link">
                 <span class="icon icon--clock" aria-hidden="true"></span>
                 <span class="user-lists__label">Por visitar</span>
                 <small class="user-lists__count" data-pending-count></small>
-              </a>
-            </li>
+            </a>
+        </li>
           </ul>
         </nav>
 
         <!-- Lugares recientes -->
         <section class="recents" aria-labelledby="recents-title">
-          <h3 id="recents-title" class="recents__title">Recientes</h3>
+            <h3 id="recents-title" class="recents__title">Recientes</h3>
           <ul class="recents__list" role="list" data-recents-list>
-            <!-- Ítems inyectados por JS -->
-          </ul>
-          <a href="/" class="recents__see-all">Ver todos</a>
+              <!-- Ítems inyectados por JS -->
+            </ul>
+            <a href="/" class="recents__see-all">Ver todos</a>
         </section>
-
+        
         <!-- Mascota / personaje -->
         <aside class="mascot" aria-label="Mascota El Gato">
           <figure class="mascot__figure">
-            <span class="mascot__img" aria-hidden="true"></span>
+              <span class="mascot__img" aria-hidden="true"></span>
             <figcaption class="mascot__caption">
-              <strong class="mascot__name">El gato te observa...</strong>
-              <p class="mascot__phrase">Cada rincón tiene su historia</p>
+                <strong class="mascot__name">El gato te observa...</strong>
+                <p class="mascot__phrase">Cada rincón tiene su historia</p>
             </figcaption>
           </figure>
         </aside>
-      </aside>
+    </aside>
 
+    <section class="places-explorer" aria-labelledby="explorar-titulo">
+ 
+        <header class="places-explorer__header">
+          <h1 class="places-explorer__title" id="explorar-titulo">Explorar lugares</h1>
+          <p class="places-explorer__subtitle">Descubrí rincones únicos que guardan historias</p>
+        </header>
+ 
+        <nav class="places-explorer__filters" aria-label="Filtrar por categoría">
+          <ul class="filter-list">
+            <li class="filter-list__item"><a class="filter-list__link filter-list__link--active" href="#" aria-current="true">Todos</a></li>
+            <li class="filter-list__item"><a class="filter-list__link" href="#">Cafeterías</a></li>
+            <li class="filter-list__item"><a class="filter-list__link" href="#">Librerías</a></li>
+            <li class="filter-list__item"><a class="filter-list__link" href="#">Jardines</a></li>
+            <li class="filter-list__item"><a class="filter-list__link" href="#">Arte</a></li>
+            <li class="filter-list__item"><a class="filter-list__link" href="#">Históricos</a></li>
+            <li class="filter-list__item"><a class="filter-list__link" href="#">Nocturnos</a></li>
+          </ul>
+          <button class="filters-button" type="button" aria-label="Abrir filtros avanzados">
+            &#9965; Filtros
+          </button>
+        </nav>
+ 
+        <p class="places-explorer__count" aria-live="polite">37 lugares encontrados</p>
+ 
+        <ol class="place-list" aria-label="Lista de lugares">
+ 
+          <li class="place-list__item">
+            <article class="place-card" aria-labelledby="place-1-name">
+              <figure class="place-card__figure">
+                <!-- img class="place-card__image" src="" alt="Foto del lugar 1" -->
+              </figure>
+              <section class="place-card__body">
+                <h2 class="place-card__name" id="place-1-name">Nombre del lugar</h2>
+                <address class="place-card__location">
+                  <a class="place-card__location-link" href="#">Barrio</a>
+                </address>
+                <p class="place-card__description">Descripción breve del lugar. Contá qué lo hace especial y por qué vale la pena visitarlo.</p>
+              </section>
+              <aside class="place-card__actions" aria-label="Acciones">
+                <button class="save-button" type="button" aria-label="Guardar lugar 1">
+                  &#128278;
+                </button>
+              </aside>
+            </article>
+          </li>
+ 
+          <li class="place-list__item">
+            <article class="place-card" aria-labelledby="place-2-name">
+              <figure class="place-card__figure">
+                <!-- img class="place-card__image" src="" alt="Foto del lugar 2" -->
+              </figure>
+              <section class="place-card__body">
+                <h2 class="place-card__name" id="place-2-name">Nombre del lugar</h2>
+                <address class="place-card__location">
+                  <a class="place-card__location-link" href="#">Barrio</a>
+                </address>
+                <p class="place-card__description">Descripción breve del lugar. Contá qué lo hace especial y por qué vale la pena visitarlo.</p>
+              </section>
+              <aside class="place-card__actions" aria-label="Acciones">
+                <button class="save-button" type="button" aria-label="Guardar lugar 2">
+                  &#128278;
+                </button>
+              </aside>
+            </article>
+          </li>
+ 
+          <li class="place-list__item">
+            <article class="place-card" aria-labelledby="place-3-name">
+              <figure class="place-card__figure">
+                <!-- img class="place-card__image" src="" alt="Foto del lugar 3" -->
+              </figure>
+              <section class="place-card__body">
+                <h2 class="place-card__name" id="place-3-name">Nombre del lugar</h2>
+                <address class="place-card__location">
+                  <a class="place-card__location-link" href="#">Barrio</a>
+                </address>
+                <p class="place-card__description">Descripción breve del lugar. Contá qué lo hace especial y por qué vale la pena visitarlo.</p>
+              </section>
+              <aside class="place-card__actions" aria-label="Acciones">
+                <button class="save-button" type="button" aria-label="Guardar lugar 3">
+                  &#128278;
+                </button>
+              </aside>
+            </article>
+          </li>
+ 
+          <li class="place-list__item">
+            <article class="place-card" aria-labelledby="place-4-name">
+              <figure class="place-card__figure">
+                <!-- img class="place-card__image" src="" alt="Foto del lugar 4" -->
+              </figure>
+              <section class="place-card__body">
+                <h2 class="place-card__name" id="place-4-name">Nombre del lugar</h2>
+                <address class="place-card__location">
+                  <a class="place-card__location-link" href="#">Barrio</a>
+                </address>
+                <p class="place-card__description">Descripción breve del lugar. Contá qué lo hace especial y por qué vale la pena visitarlo.</p>
+              </section>
+              <aside class="place-card__actions" aria-label="Acciones">
+                <button class="save-button" type="button" aria-label="Guardar lugar 4">
+                  &#128278;
+                </button>
+              </aside>
+            </article>
+          </li>
+ 
+        </ol>
+ 
+      </section>
+</main>
 
-
-      <!-- ===== FOOTER DEL SITIO ===== -->
+    <!-- ===== FOOTER DEL SITIO ===== -->
     <footer class="site-footer">
       <p class="site-footer__copy">
         &copy; <time datetime="2026">2026</time> Secretos de la Ciudad
