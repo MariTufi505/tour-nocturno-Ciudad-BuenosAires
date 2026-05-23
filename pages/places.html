@@ -97,6 +97,7 @@
         </aside>
     </aside>
 
+    <!-- Section de la lista de lugares para explorar -->
     <section class="places-explorer" aria-labelledby="explorar-titulo">
  
         <header class="places-explorer__header">
@@ -104,6 +105,7 @@
           <p class="places-explorer__subtitle">Descubrí rincones únicos que guardan historias</p>
         </header>
  
+        <!-- Filtros -->
         <nav class="places-explorer__filters" aria-label="Filtrar por categoría">
           <ul class="filter-list">
             <li class="filter-list__item"><a class="filter-list__link filter-list__link--active" href="#" aria-current="true">Todos</a></li>
@@ -121,7 +123,10 @@
  
         <p class="places-explorer__count" aria-live="polite">37 lugares encontrados</p>
  
+        <!-- Lista de lugares para explorar -->
         <ol class="place-list" aria-label="Lista de lugares">
+
+        <!-- Items Que deberían ser inyectados con JS. Aparecen 4 unicamente a modo de visualización. -->
  
           <li class="place-list__item">
             <article class="place-card" aria-labelledby="place-1-name">
