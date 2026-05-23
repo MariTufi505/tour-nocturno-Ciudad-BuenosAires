@@ -19,18 +19,16 @@
 
     <!-- ===== Navegación principal ===== -->
     <nav class="main-nav" aria-label="Navegación principal">
-      
       <ul class="main-nav__list">
         <li><a href="../index.html" class="main-nav__link">Inicio</a></li>
-       <li><a href="places.html" class="main-nav__link main-nav__link--active" aria-current="page">Explorar</a></li>
-        <li><a href="#" class="main-nav__link">Mapa</a></li>
+        <li><a href="places.html" class="main-nav__link">Explorar</a></li>
+        <li><a href="#" class="main-nav__link main-nav__link--active" aria-current="page">Mapa</a></li>
         <li><a href="about.html" class="main-nav__link">Sobre nosotros</a></li>
       </ul>
     </nav>
 
     <!-- ===== Barra de búsqueda ===== -->
     <form class="site-search" role="search" action="#" method="get">
-
       <label for="search-input" class="sr-only">Buscar lugares</label>
       <input
         id="search-input"
@@ -46,17 +44,16 @@
     </form>
   </header>
 
-  
   <main class="site-layout">
 
-    <!-- Mapa --> 
+    <!-- Mapa -->
     <section class="map-explorer" aria-labelledby="map-title">
       <header class="map-explorer__header">
         <p class="map-explorer__eyebrow">Explorar la ciudad</p>
-        <h2 class="map-explorer__title" id="map-title">
+        <h1 class="map-explorer__title" id="map-title">
           El mapa de los
           <em class="map-explorer__title-highlight">secretos</em>
-        </h2>
+        </h1>
         <p class="map-explorer__description">
           Capital Federal vista desde arriba. Cada punto esconde algo que la historia oficial no cuenta.
         </p>
@@ -81,37 +78,27 @@
       <footer class="map-explorer__stats">
         <ul class="stats-list" aria-label="Datos sobre Buenos Aires">
           <li class="stats-list__item">
-            <article class="stat-card">
-              <strong class="stat-card__value">48</strong>
-              <p class="stat-card__label">barrios oficiales</p>
-            </article>
+            <strong class="stat-card__value">48</strong>
+            <p class="stat-card__label">barrios oficiales</p>
           </li>
           <li class="stats-list__item">
-            <article class="stat-card">
-              <strong class="stat-card__value">3M</strong>
-              <p class="stat-card__label">habitantes en CABA</p>
-            </article>
+            <strong class="stat-card__value">3M</strong>
+            <p class="stat-card__label">habitantes en CABA</p>
           </li>
           <li class="stats-list__item">
-            <article class="stat-card">
-              <strong class="stat-card__value">
-                202 <abbr title="kilómetros cuadrados">km²</abbr>
-              </strong>
-              <p class="stat-card__label">de superficie</p>
-            </article>
+            <strong class="stat-card__value">202 <abbr title="kilómetros cuadrados">km²</abbr></strong>
+            <p class="stat-card__label">de superficie</p>
           </li>
           <li class="stats-list__item">
-            <article class="stat-card">
-              <strong class="stat-card__value">1580</strong>
-              <p class="stat-card__label">año de fundación</p>
-            </article>
+            <strong class="stat-card__value">1580</strong>
+            <p class="stat-card__label">año de fundación</p>
           </li>
         </ul>
       </footer>
 
     </section>
 
-    </main>
+  </main>
 
   <!-- ===== FOOTER DEL SITIO ===== -->
   <footer class="site-footer">
