@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa de la Ciudad de Buenos Aires</title>
+</head>
+<body>
+
+  <!-- ===== HEADER / NAV PRINCIPAL ===== -->
+  <header class="site-header">
+    <a href="/" class="brand" aria-label="Ir al inicio — Secretos de la Ciudad">
+      <span class="brand__icon" aria-hidden="true"></span>
+      <span class="brand__name">
+        <strong>Secretos</strong>
+        <span>de la Ciudad</span>
+      </span>
+    </a>
+
+    <!-- ===== Navegación principal ===== -->
+    <nav class="main-nav" aria-label="Navegación principal">
+      
+      <ul class="main-nav__list">
+        <li><a href="/" class="main-nav__link">Inicio</a></li>
+       <li><a href="pages/places.html" class="main-nav__link main-nav__link--active" aria-current="page">Explorar</a></li>
+        <li><a href="/" class="main-nav__link">Mapa</a></li>
+        <li><a href="/" class="main-nav__link">Sobre nosotros</a></li>
+      </ul>
+    </nav>
+
+    <!-- ===== Barra de búsqueda ===== -->
+    <form class="site-search" role="search" action="#" method="get">
+
+      <label for="search-input" class="sr-only">Buscar lugares</label>
+      <input
+        id="search-input"
+        type="search"
+        name="q"
+        class="site-search__input"
+        placeholder="Buscar lugares..."
+        autocomplete="off"
+      />
+      <button type="submit" class="site-search__btn" aria-label="Buscar">
+        <span class="icon icon--search" aria-hidden="true"></span>
+      </button>
+    </form>
+  </header>
+
+  
+  <main class="site-layout">
+
+    <section class="map-explorer" aria-labelledby="map-title">
+
+      <header class="map-explorer__header">
+        <p class="map-explorer__eyebrow">Explorar la ciudad</p>
+        <h2 class="map-explorer__title" id="map-title">
+          El mapa de los
+          <em class="map-explorer__title-highlight">secretos</em>
+        </h2>
+        <p class="map-explorer__description">
+          Capital Federal vista desde arriba. Cada punto esconde algo que la historia oficial no cuenta.
+        </p>
+      </header>
+
+      <figure class="map-explorer__figure">
+        <iframe
+          class="map-explorer__map"
+          title="Mapa de Buenos Aires, Capital Federal"
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d52571.31509641682!2d-58.45792!3d-34.61315!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95bcca3b4ef90cbd%3A0xa0b3812e88e88e87!2sBuenos%20Aires!5e0!3m2!1ses!2sar!4v1700000000000"
+          allowfullscreen
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          aria-label="Mapa interactivo de Buenos Aires"
+        ></iframe>
+        <figcaption class="sr-only">
+          Mapa interactivo de la Ciudad Autónoma de Buenos Aires mostrando sus barrios y puntos de interés.
+        </figcaption>
+      </figure>
+
+      <footer class="map-explorer__stats">
+        <ul class="stats-list" aria-label="Datos sobre Buenos Aires">
+          <li class="stats-list__item">
+            <article class="stat-card">
+              <strong class="stat-card__value">48</strong>
+              <p class="stat-card__label">barrios oficiales</p>
+            </article>
+          </li>
+          <li class="stats-list__item">
+            <article class="stat-card">
+              <strong class="stat-card__value">3M</strong>
+              <p class="stat-card__label">habitantes en CABA</p>
+            </article>
+          </li>
+          <li class="stats-list__item">
+            <article class="stat-card">
+              <strong class="stat-card__value">
+                202 <abbr title="kilómetros cuadrados">km²</abbr>
+              </strong>
+              <p class="stat-card__label">de superficie</p>
+            </article>
+          </li>
+          <li class="stats-list__item">
+            <article class="stat-card">
+              <strong class="stat-card__value">1580</strong>
+              <p class="stat-card__label">año de fundación</p>
+            </article>
+          </li>
+        </ul>
+      </footer>
+
+    </section>
+
+    </main>
+
+  <!-- ===== FOOTER DEL SITIO ===== -->
+  <footer class="site-footer">
+    <p class="site-footer__copy">
+      &copy; <time datetime="2026">2026</time> Secretos de la Ciudad
+    </p>
+  </footer>
+
+</body>
+</html>
