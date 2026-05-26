@@ -750,3 +750,15 @@ body {
 .card__badge--naturaleza   { background: #3f6212; }
 
 
+/* ===== FOOTER ===== */
+.site-footer {
+  text-align: center;
+  padding: 2rem var(--section-px);
+  background: var(--color-bg-card);
+  border-top: 1px solid var(--color-border-card);
+}
+
+.site-footer__copy {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
