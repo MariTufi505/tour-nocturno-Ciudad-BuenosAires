@@ -1,7 +1,7 @@
 // ==========================================
 // CONFIGURACIÓN GLOBAL Y LOCALSTORAGE
 // ==========================================
-const URL_JSON = 'places.json';
+const URL_JSON = 'data/places.json';
 // Obtenemos los favoritos del localStorage o inicializamos un array vacío
 let favoritos = JSON.parse(localStorage.getItem('lugaresFavoritos')) || [];
 let datosLugares = []; // Array donde se guardarán los objetos del JSON
