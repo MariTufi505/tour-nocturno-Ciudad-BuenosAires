@@ -81,7 +81,7 @@
 
 .featured__grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--space-5);
   transition: transform var(--transition-slow);
 }
@@ -94,7 +94,7 @@
   border-radius: 50%;
   background: var(--color-surface-2);
   border: 1px solid var(--color-border);
-  display: flex;
+  display: none;
   align-items: center;
   justify-content: center;
   color: var(--color-text-muted);
