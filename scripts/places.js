@@ -91,7 +91,12 @@ function renderizarCards(lugares, contenedor) {
         <div class="card__inner">
         <figure class="card__media">
             <mark class="card__badge">${lugar.categoria}</mark>
-            <button class="card__bookmark btn-favorito" type="button" aria-label="Guardar lugar">
+            <button 
+                class="card__bookmark btn-favorito ${esFavorito ? 'card__bookmark--saved' : ''}" 
+                type="button" 
+                aria-label="${esFavorito ? 'Quitar de favoritos' : 'Agregar a favoritos'}"
+                title="${esFavorito ? 'Quitar de favoritos' : 'Agregar a favoritos'}"
+            >
                 ${esFavorito ? '❤️' : '🤍'}
             </button>
             <span class="card__gradient" aria-hidden="true"></span>
@@ -116,7 +121,7 @@ function renderizarCards(lugares, contenedor) {
             </div>
 
             <footer class="card__footer">
-                <button class="card__btn" type="button">Ver más</button>
+                <button class="card__btn" type="button">Ver más +</button>
             </footer>
         </section>
     </div>
@@ -143,12 +148,18 @@ function renderizarCards(lugares, contenedor) {
             const infoExtendida = card.querySelector('.info-extendida');
             const descCorta = card.querySelector('.descripcion-corta');
             
+            const btnExpandir = card.querySelector('.card__btn');
             if (infoExtendida.style.display === 'none') {
                 infoExtendida.style.display = 'block';
                 descCorta.style.display = 'none'; // Ocultamos el extracto cuando se expande
+                
+                btnExpandir.textContent = 'Ver menos -';
+            
             } else {
                 infoExtendida.style.display = 'none';
                 descCorta.style.display = 'block'; // Mostramos el extracto cuando se contrae
+                
+                btnExpandir.textContent = 'Ver más +';
             }
         });
 
@@ -170,15 +181,17 @@ function manejarFavorito(idLugar, botonElemento) {
     if (indice === -1) {
         // No está en favoritos, lo agregamos
         favoritos.push(idLugar);
-        botonElemento.textContent = '❤️ Quitar Favorito';
-        botonElemento.style.backgroundColor = '#ffebee';
-        botonElemento.style.color = '#c62828';
+        botonElemento.textContent = '❤️';
+        botonElemento.classList.add('card__bookmark--saved');
+        botonElemento.setAttribute('aria-label', 'Quitar de favoritos');
+        botonElemento.setAttribute('title', 'Quitar de favoritos');
     } else {
         // Ya está en favoritos, lo quitamos
         favoritos.splice(indice, 1);
-        botonElemento.textContent = '🤍 Agregar Favorito';
-        botonElemento.style.backgroundColor = '#f0f0f0';
-        botonElemento.style.color = '#333';
+        botonElemento.textContent = '🤍';
+        botonElemento.classList.remove('card__bookmark--saved');
+        botonElemento.setAttribute('aria-label', 'Agregar a favoritos');
+        botonElemento.setAttribute('title', 'Agregar a favoritos');
     }
 
     localStorage.setItem('lugaresFavoritos', JSON.stringify(favoritos));

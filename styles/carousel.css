@@ -269,7 +269,7 @@
   transition: opacity var(--transition-fast);
   letter-spacing: 0.01em;
 }
-.card__btn::after { content: ' →'; }
+.card__btn::after { content: ''; }
 .card__btn:hover { opacity: 0.75; }
 
 /* ────────────────────────────────────────────────────────────
