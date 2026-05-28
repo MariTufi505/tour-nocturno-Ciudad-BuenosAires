@@ -65,8 +65,8 @@ function renderizarCards(lugares, contenedor) {
     const lugaresAMostrar = contenedor.id === 'contenedor-cards-index' ? lugares.slice(0, 3) : lugares;
 
     lugaresAMostrar.forEach(lugar => {
-        const card = document.createElement('div');
-        card.classList.add('card-lugar');
+        const card = document.createElement('article');
+        card.classList.add('card');
         
         // Aplicamos estilos base y flexbox para igualar alturas
         Object.assign(card.style, {
@@ -87,31 +87,40 @@ function renderizarCards(lugares, contenedor) {
             : '<li>Sin recomendaciones específicas</li>';
 
         // Inyectamos el HTML. Usamos flex-grow: 1 para empujar el botón hacia abajo.
-        card.innerHTML = `
-            <div class="card-contenido" style="display: flex; flex-direction: column; flex-grow: 1;">
-                <span style="font-size: 0.8rem; color: #666; text-transform: uppercase;">${lugar.categoria}</span>
-                <h3 style="margin: 5px 0;">${lugar.nombre}</h3>
-                <p style="font-size: 0.9rem; color: #555;">📍 ${lugar.barrio} - ${lugar.ubicacion_exacta}</p>
-                
-                <p class="descripcion-corta" style="flex-grow: 1;">${lugar.informacion.substring(0, 100)}...</p>
-                
-                <div class="info-extendida" style="display: none; margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px; flex-grow: 1;">
-                    <p style="font-size: 0.9rem;"><strong>Historia/Detalles:</strong> ${lugar.informacion}</p>
-                    <p style="font-size: 0.9rem;"><strong>Horario Nocturno:</strong> ${lugar.horarios_nocturnos}</p>
-                    <p style="font-size: 0.9rem;"><strong>Precio:</strong> ${lugar.precio} | <strong>Accesibilidad:</strong> ${lugar.accesibilidad}</p>
-                    <div style="font-size: 0.9rem; margin-top: 10px;">
-                        <strong>Recomendaciones:</strong>
-                        <ul style="margin-top: 5px; padding-left: 20px;">
-                            ${listaRecomendaciones}
-                        </ul>
-                    </div>
-                </div>
-                
-                <button class="btn-favorito" style="margin-top: 15px; padding: 8px 12px; cursor: pointer; border: none; border-radius: 4px; background-color: ${esFavorito ? '#ffebee' : '#f0f0f0'}; color: ${esFavorito ? '#c62828' : '#333'}; font-weight: bold; width: 100%;">
-                    ${esFavorito ? '❤️ Quitar Favorito' : '🤍 Agregar Favorito'}
-                </button>
+       card.innerHTML = `
+        <div class="card__inner">
+        <figure class="card__media">
+            <mark class="card__badge">${lugar.categoria}</mark>
+            <button class="card__bookmark btn-favorito" type="button" aria-label="Guardar lugar">
+                ${esFavorito ? '❤️' : '🤍'}
+            </button>
+            <span class="card__gradient" aria-hidden="true"></span>
+        </figure>
+
+        <section class="card__body">
+            <h3 class="card__title">${lugar.nombre}</h3>
+            <address class="card__location">
+                <span class="card__location-text">
+                    📍 ${lugar.barrio} - ${lugar.ubicacion_exacta}
+                </span>
+            </address>
+
+            <p class="card__description descripcion-corta">
+                ${lugar.informacion.substring(0, 100)}...
+            </p>
+
+            <div class="info-extendida" style="display: none;">
+                <p><strong>Historia/Detalles:</strong> ${lugar.informacion}</p>
+                <p><strong>Horario Nocturno:</strong> ${lugar.horarios_nocturnos}</p>
+                <p><strong>Precio:</strong> ${lugar.precio}</p>
             </div>
-        `;
+
+            <footer class="card__footer">
+                <button class="card__btn" type="button">Ver más</button>
+            </footer>
+        </section>
+    </div>
+`;
 
         // 3. Lógica del Hover (Mini ventana)
         card.addEventListener('mousemove', (e) => {
