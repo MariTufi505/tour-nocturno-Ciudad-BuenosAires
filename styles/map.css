@@ -441,3 +441,8 @@
     font-size: clamp(2rem, 8vw, 2.5rem);
   }
 }
+
+.map-stage__error[hidden],
+.map-stage__loading[hidden] {
+  display: none !important;
+}
