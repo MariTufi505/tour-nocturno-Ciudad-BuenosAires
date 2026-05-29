@@ -1,7 +1,7 @@
 // ==========================================
 // CONFIGURACIÓN GLOBAL Y LOCALSTORAGE
 // ==========================================
-const URL_JSON = 'places.json';
+const URL_JSON = 'data/places.json';
 // Obtenemos los favoritos del localStorage o inicializamos un array vacío
 let favoritos = JSON.parse(localStorage.getItem('lugaresFavoritos')) || [];
 let datosLugares = []; // Array donde se guardarán los objetos del JSON
@@ -173,4 +173,231 @@ function manejarFavorito(idLugar, botonElemento) {
     }
 
     localStorage.setItem('lugaresFavoritos', JSON.stringify(favoritos));
+}
+
+// ==========================================
+// LÓGICA DEL MAPA INTERACTIVO (map.html)
+// ==========================================
+
+document.addEventListener('DOMContentLoaded', () => {
+    const mapaContenedor = document.getElementById('mapa-contenedor');
+    
+    // Solo ejecutamos la lógica del mapa si estamos en map.html
+    if (mapaContenedor) {
+        inicializarMapaApp();
+    }
+});
+
+async function inicializarMapaApp() {
+    const loading = document.getElementById('mapa-loading');
+    const errorContenedor = document.getElementById('mapa-error');
+    
+    try {
+        const respuesta = await fetch(URL_JSON);
+        if (!respuesta.ok) throw new Error("Error al cargar el JSON del mapa");
+        
+        const lugares = await respuesta.json();
+        
+        // Ocultar loading
+        if (loading) loading.style.display = 'none';
+        
+        // Configurar la interfaz del mapa
+        configurarFiltrosMapa(lugares);
+        renderizarMapaSvg(lugares, 'Todos');
+        configurarBotonCerrarPanel();
+
+    } catch (error) {
+        console.error("Error cargando el mapa:", error);
+        if (loading) loading.style.display = 'none';
+        if (errorContenedor) errorContenedor.hidden = false;
+    }
+}
+
+// 1. Configuración de Filtros
+function configurarFiltrosMapa(lugares) {
+    const contenedorFiltros = document.getElementById('mapa-filtros');
+    if (!contenedorFiltros) return;
+
+    // Extraer categorías únicas (simplificando la primera parte antes de la barra '/')
+    const categoriasSueltas = lugares.map(l => l.categoria.split(' / ')[0].trim());
+    const categoriasUnicas = ['Todos', ...new Set(categoriasSueltas)];
+
+    contenedorFiltros.innerHTML = ''; // Limpiar
+
+    categoriasUnicas.forEach(cat => {
+        const btn = document.createElement('button');
+        btn.textContent = cat;
+        btn.classList.add('map-filter-btn');
+        // Estilo base por JS (puedes moverlo a tu CSS)
+        Object.assign(btn.style, {
+            padding: '8px 16px', margin: '4px', borderRadius: '20px',
+            border: '1px solid #ccc', background: cat === 'Todos' ? '#333' : '#fff',
+            color: cat === 'Todos' ? '#fff' : '#333', cursor: 'pointer'
+        });
+
+        btn.addEventListener('click', () => {
+            // Actualizar estilos activos
+            document.querySelectorAll('.map-filter-btn').forEach(b => {
+                b.style.background = '#fff';
+                b.style.color = '#333';
+            });
+            btn.style.background = '#333';
+            btn.style.color = '#fff';
+
+            // Re-renderizar mapa con filtro
+            renderizarMapaSvg(lugares, cat);
+        });
+
+        contenedorFiltros.appendChild(btn);
+    });
+}
+
+// 2. Renderizado del Mapa Artificial (SVG)
+function renderizarMapaSvg(lugares, filtro) {
+    const contenedor = document.getElementById('mapa-contenedor');
+    const contador = document.getElementById('mapa-contador');
+    contenedor.innerHTML = ''; // Limpiar lienzo
+
+    // Filtrar lugares
+    const lugaresFiltrados = filtro === 'Todos' 
+        ? lugares 
+        : lugares.filter(l => l.categoria.includes(filtro));
+    
+    if (contador) contador.textContent = lugaresFiltrados.length;
+
+    // Dimensiones del lienzo virtual
+    const width = 800;
+    const height = 800;
+    const padding = 50;
+
+    // Crear elemento SVG
+    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
+    svg.style.width = "100%";
+    svg.style.height = "100%";
+    
+    /* NOTA: Si en el futuro quieres poner la imagen de los barrios de fondo, 
+      puedes descomentar este bloque y agregar tu imagen.
+      
+      const imagenFondo = document.createElementNS("http://www.w3.org/2000/svg", "image");
+      imagenFondo.setAttribute("href", "../assets/buenos-aires-safety-map-768x768.jpg");
+      imagenFondo.setAttribute("width", "100%");
+      imagenFondo.setAttribute("height", "100%");
+      imagenFondo.setAttribute("preserveAspectRatio", "xMidYMid slice");
+      svg.appendChild(imagenFondo);
+    */
+
+    // Encontrar límites geográficos de CABA aprox (para calcular la proyección)
+    // Usamos los máximos y mínimos de los lugares presentes
+    const lats = lugares.map(l => l.coordenadas.latitud);
+    const lngs = lugares.map(l => l.coordenadas.longitud);
+    const minLat = Math.min(...lats);
+    const maxLat = Math.max(...lats);
+    const minLng = Math.min(...lngs);
+    const maxLng = Math.max(...lngs);
+
+    // Renderizar los pines (marcadores)
+    lugaresFiltrados.forEach(lugar => {
+        // Conversión matemática de Lat/Lng a coordenadas X/Y del SVG
+        const x = ((lugar.coordenadas.longitud - minLng) / (maxLng - minLng)) * (width - padding * 2) + padding;
+        const y = ((maxLat - lugar.coordenadas.latitud) / (maxLat - minLat)) * (height - padding * 2) + padding;
+
+        const grupoPin = document.createElementNS("http://www.w3.org/2000/svg", "g");
+        grupoPin.style.cursor = "pointer";
+        
+        // Círculo del pin
+        const pin = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        pin.setAttribute("cx", x);
+        pin.setAttribute("cy", y);
+        pin.setAttribute("r", "12");
+        pin.setAttribute("fill", "#e91e63");
+        pin.setAttribute("stroke", "#ffffff");
+        pin.setAttribute("stroke-width", "3");
+        
+        // Animación hover por JS (básica)
+        grupoPin.addEventListener('mouseenter', () => pin.setAttribute("r", "16"));
+        grupoPin.addEventListener('mouseleave', () => pin.setAttribute("r", "12"));
+
+        // Evento Click para abrir el panel
+        grupoPin.addEventListener('click', () => abrirPanelLugar(lugar));
+
+        grupoPin.appendChild(pin);
+        svg.appendChild(grupoPin);
+    });
+
+    contenedor.appendChild(svg);
+}
+
+// 3. Lógica del Panel Lateral
+function abrirPanelLugar(lugar) {
+    const panel = document.getElementById('mapa-panel');
+    const panelEmpty = document.getElementById('mapa-panel-empty');
+    const panelDetalle = document.getElementById('mapa-panel-detalle');
+
+    // Mostrar el panel activo
+    panel.hidden = false;
+    panelEmpty.style.display = 'none';
+    panelDetalle.hidden = false;
+
+    // Inyectar datos en el DOM
+    document.getElementById('mapa-panel-categoria').textContent = lugar.categoria;
+    document.getElementById('mapa-panel-nombre').textContent = lugar.nombre;
+    document.getElementById('mapa-panel-barrio').textContent = lugar.barrio;
+    document.getElementById('mapa-panel-info').textContent = lugar.informacion;
+    document.getElementById('mapa-panel-horario').textContent = lugar.horarios_nocturnos || 'No especificado';
+    document.getElementById('mapa-panel-precio').textContent = lugar.precio;
+    document.getElementById('mapa-panel-accesibilidad').textContent = lugar.accesibilidad;
+
+    // Recomendaciones (Listas)
+    const containerRecomendaciones = document.getElementById('mapa-panel-recomendaciones');
+    containerRecomendaciones.innerHTML = lugar.recomendaciones
+        ? lugar.recomendaciones.map(r => `<li>${r}</li>`).join('')
+        : '<li>Sin recomendaciones.</li>';
+
+    // Tags (Ideal para)
+    const containerTags = document.getElementById('mapa-panel-tags');
+    containerTags.innerHTML = lugar.ideal_para
+        ? lugar.ideal_para.map(tag => `<li class="map-panel__tag" style="display:inline-block; background:#eee; padding:4px 8px; border-radius:4px; margin:2px; font-size:0.8rem;">${tag}</li>`).join('')
+        : '';
+
+    // Lógica del botón Favorito (reutilizando variable global "favoritos" de places.js)
+    const btnFav = document.getElementById('mapa-panel-btn-favorito');
+    
+    // Limpiamos listeners previos clonando el nodo para evitar múltiples ejecuciones
+    const nuevoBtnFav = btnFav.cloneNode(true);
+    btnFav.parentNode.replaceChild(nuevoBtnFav, btnFav);
+    
+    actualizarVistaBtnFavMapa(nuevoBtnFav, lugar.id);
+
+    nuevoBtnFav.addEventListener('click', () => {
+        // Reutilizamos la función que ya hiciste arriba en places.js!
+        manejarFavorito(lugar.id, nuevoBtnFav);
+        // Modificamos ligeramente la apariencia porque en el mapa el diseño es distinto
+        actualizarVistaBtnFavMapa(nuevoBtnFav, lugar.id);
+    });
+}
+
+function actualizarVistaBtnFavMapa(boton, idLugar) {
+    const esFavorito = favoritos.includes(idLugar); // 'favoritos' viene de la parte superior de places.js
+    const label = boton.querySelector('.map-panel__btn-favorito-label');
+    const icon = boton.querySelector('.map-panel__btn-favorito-icon');
+    
+    if (label && icon) {
+        label.textContent = esFavorito ? 'Quitar de favoritos' : 'Agregar a favoritos';
+        icon.textContent = esFavorito ? '❤️' : '🤍';
+    }
+}
+
+function configurarBotonCerrarPanel() {
+    const btnCerrar = document.getElementById('mapa-panel-btn-cerrar');
+    if (!btnCerrar) return;
+
+    btnCerrar.addEventListener('click', () => {
+        document.getElementById('mapa-panel-empty').style.display = 'flex';
+        document.getElementById('mapa-panel-detalle').hidden = true;
+        // Opcional: Ocultar panel entero en móviles
+        if (window.innerWidth < 768) {
+            document.getElementById('mapa-panel').hidden = true;
+        }
+    });
 }

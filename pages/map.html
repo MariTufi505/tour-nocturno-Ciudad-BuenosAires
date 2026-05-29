@@ -3,14 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mapa de la Ciudad de Buenos Aires</title>
-    <link rel="stylesheet" href="/styles/style.css">
+    <title>Mapa — Secretos de la Ciudad</title>
+    <link rel="stylesheet" href="../styles/global.css">
+    <link rel="stylesheet" href="../styles/hero.css">
+    <link rel="stylesheet" href="../styles/carousel.css">
+    <link rel="stylesheet" href="../styles/style.css">
+    <link rel="stylesheet" href="../styles/map.css">
 </head>
-<body>
+<body class="page--map">
 
-  <!-- ===== HEADER / NAV PRINCIPAL ===== -->
+  <!-- ═══ HEADER ═══ -->
   <header class="site-header">
-    <a href="/" class="brand" aria-label="Ir al inicio — Secretos de la Ciudad">
+    <a href="../index.html" class="brand" aria-label="Ir al inicio — Secretos de la Ciudad">
       <span class="brand__icon" aria-hidden="true"></span>
       <span class="brand__name">
         <strong>Secretos</strong>
@@ -18,17 +22,15 @@
       </span>
     </a>
 
-    <!-- ===== Navegación principal ===== -->
     <nav class="main-nav" aria-label="Navegación principal">
       <ul class="main-nav__list">
         <li><a href="../index.html" class="main-nav__link">Inicio</a></li>
         <li><a href="places.html" class="main-nav__link">Explorar</a></li>
-        <li><a href="#" class="main-nav__link main-nav__link--active" aria-current="page">Mapa</a></li>
+        <li><a href="map.html" class="main-nav__link main-nav__link--active" aria-current="page">Mapa</a></li>
         <li><a href="about.html" class="main-nav__link">Sobre nosotros</a></li>
       </ul>
     </nav>
 
-    <!-- ===== Barra de búsqueda ===== -->
     <form class="site-search" role="search" action="#" method="get">
       <label for="search-input" class="sr-only">Buscar lugares</label>
       <input
@@ -45,68 +47,200 @@
     </form>
   </header>
 
-  <main class="site-layout">
+  <!-- ═══ MAIN ═══ -->
+  <main class="site-layout site-layout--map">
 
-    <!-- Mapa -->
-    <section class="map-explorer" aria-labelledby="map-title">
-      <header class="map-explorer__header">
-        <p class="map-explorer__eyebrow">Explorar la ciudad</p>
-        <h1 class="map-explorer__title" id="map-title">
-          El mapa de los
-          <em class="map-explorer__title-highlight">secretos</em>
+    <!-- ─── Encabezado de página ─── -->
+    <section class="map-header">
+      <article class="map-header__container">
+        <header class="map-header__eyebrow">
+          <hr class="map-header__eyebrow-line" aria-hidden="true" />
+          <span class="map-header__eyebrow-label">Explorar la ciudad</span>
+        </header>
+        <h1 class="map-header__title">
+          Mapa <em class="map-header__title-highlight">interactivo</em>
         </h1>
-        <p class="map-explorer__description">
-          Capital Federal vista desde arriba. Cada punto esconde algo que la historia oficial no cuenta.
+        <p class="map-header__description">
+          Descubrí todos los rincones secretos de Buenos Aires. Hacé clic en un marcador para ver los detalles del lugar.
         </p>
-      </header>
+      </article>
+    </section>
 
-      <figure class="map-explorer__figure">
-        <iframe
-          class="map-explorer__map"
-          title="Mapa de Buenos Aires, Capital Federal"
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d52571.31509641682!2d-58.45792!3d-34.61315!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95bcca3b4ef90cbd%3A0xa0b3812e88e88e87!2sBuenos%20Aires!5e0!3m2!1ses!2sar!4v1700000000000"
-          allowfullscreen
-          loading="lazy"
-          referrerpolicy="no-referrer-when-downgrade"
+    <!-- ─── Zona principal: filtros + mapa + panel ─── -->
+    <section class="map-layout" aria-label="Mapa y lugares">
+
+      <!-- BARRA DE FILTROS -->
+      <aside class="map-filters" aria-label="Filtros de categoría">
+        <header class="map-filters__header">
+          <h2 class="map-filters__title">Filtrar por</h2>
+        </header>
+
+        <!-- El script inyectará los botones de categoría aquí -->
+        <nav
+          id="mapa-filtros"
+          class="map-filters__nav"
+          role="navigation"
+          aria-label="Categorías de lugares"
+        >
+          <!-- JS: renderizarFiltros() inyecta botones .map-filter-btn aquí -->
+        </nav>
+
+        <!-- Contador de resultados -->
+        <footer class="map-filters__footer">
+          <p class="map-filters__count">
+            Mostrando <strong id="mapa-contador">0</strong> lugares
+          </p>
+        </footer>
+      </aside>
+
+      <!-- MAPA SVG / CANVAS -->
+      <div class="map-stage" role="region" aria-label="Mapa de Buenos Aires">
+
+        <!-- Estado de carga -->
+        <div class="map-stage__loading" id="mapa-loading" aria-live="polite" aria-label="Cargando mapa">
+          <span class="map-stage__loading-spinner" aria-hidden="true"></span>
+          <p>Cargando lugares…</p>
+        </div>
+
+        <!-- Estado de error -->
+        <div class="map-stage__error" id="mapa-error" hidden aria-live="assertive">
+          <p>No se pudieron cargar los lugares. Verificá que <code>places.json</code> exista y sea válido.</p>
+        </div>
+
+        <!-- El script inyecta el SVG del mapa aquí -->
+        <div
+          id="mapa-contenedor"
+          class="map-stage__canvas"
           aria-label="Mapa interactivo de Buenos Aires"
-        ></iframe>
-        <figcaption class="sr-only">
-          Mapa interactivo de la Ciudad Autónoma de Buenos Aires mostrando sus barrios y puntos de interés.
-        </figcaption>
-      </figure>
+          tabindex="0"
+        >
+          <!-- JS: renderizarMapa() inyecta el SVG dinámico aquí -->
+        </div>
 
-      <!-- Estadisticas -->
-      <footer class="map-explorer__stats">
-        <ul class="stats-list" aria-label="Datos sobre Buenos Aires">
-          <li class="stats-list__item">
-            <strong class="stat-card__value">48</strong>
-            <p class="stat-card__label">barrios oficiales</p>
-          </li>
-          <li class="stats-list__item">
-            <strong class="stat-card__value">3M</strong>
-            <p class="stat-card__label">habitantes en CABA</p>
-          </li>
-          <li class="stats-list__item">
-            <strong class="stat-card__value">202 <abbr title="kilómetros cuadrados">km²</abbr></strong>
-            <p class="stat-card__label">de superficie</p>
-          </li>
-          <li class="stats-list__item">
-            <strong class="stat-card__value">1580</strong>
-            <p class="stat-card__label">año de fundación</p>
-          </li>
-        </ul>
-      </footer>
+        <!-- Leyenda del mapa -->
+        <footer class="map-legend" id="mapa-leyenda" aria-label="Leyenda del mapa">
+          <!-- JS: renderizarLeyenda() inyecta ítems .map-legend__item aquí -->
+        </footer>
+      </div>
+
+      <!-- PANEL LATERAL DE DETALLE -->
+      <aside
+        class="map-panel"
+        id="mapa-panel"
+        aria-label="Detalle del lugar seleccionado"
+        aria-live="polite"
+        hidden
+      >
+        <!-- Estado vacío (cuando ningún lugar está seleccionado) -->
+        <div class="map-panel__empty" id="mapa-panel-empty">
+          <span class="map-panel__empty-icon" aria-hidden="true">📍</span>
+          <p>Seleccioná un marcador en el mapa para ver los detalles del lugar.</p>
+        </div>
+
+        <!-- Detalle del lugar — el script inyecta contenido aquí -->
+        <article class="map-panel__detail" id="mapa-panel-detalle" hidden>
+
+          <!-- Imagen del lugar -->
+          <figure class="map-panel__media" id="mapa-panel-media">
+            <!-- JS inyecta <img> aquí si hay imagen disponible -->
+          </figure>
+
+          <!-- Cabecera del lugar -->
+          <header class="map-panel__header">
+            <span class="map-panel__badge" id="mapa-panel-categoria"></span>
+            <h2 class="map-panel__nombre" id="mapa-panel-nombre"></h2>
+            <address class="map-panel__ubicacion" id="mapa-panel-ubicacion">
+              <svg class="map-panel__ubicacion-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="14" height="14" aria-hidden="true">
+                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+              </svg>
+              <span id="mapa-panel-barrio"></span>
+            </address>
+          </header>
+
+          <!-- Cuerpo del lugar -->
+          <section class="map-panel__body">
+
+            <p class="map-panel__info" id="mapa-panel-info"></p>
+
+            <dl class="map-panel__meta">
+              <div class="map-panel__meta-item">
+                <dt class="map-panel__meta-label">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                  Horario nocturno
+                </dt>
+                <dd class="map-panel__meta-value" id="mapa-panel-horario"></dd>
+              </div>
+              <div class="map-panel__meta-item">
+                <dt class="map-panel__meta-label">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14" aria-hidden="true"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                  Precio
+                </dt>
+                <dd class="map-panel__meta-value" id="mapa-panel-precio"></dd>
+              </div>
+              <div class="map-panel__meta-item">
+                <dt class="map-panel__meta-label">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+                  Accesibilidad
+                </dt>
+                <dd class="map-panel__meta-value" id="mapa-panel-accesibilidad"></dd>
+              </div>
+            </dl>
+
+            <!-- Recomendaciones -->
+            <div class="map-panel__recomendaciones">
+              <h3 class="map-panel__recomendaciones-title">Recomendaciones</h3>
+              <ul class="map-panel__recomendaciones-list" id="mapa-panel-recomendaciones">
+                <!-- JS inyecta <li> aquí -->
+              </ul>
+            </div>
+
+            <!-- Ideal para -->
+            <div class="map-panel__tags" id="mapa-panel-tags-container">
+              <h3 class="map-panel__tags-title">Ideal para</h3>
+              <ul class="map-panel__tags-list" id="mapa-panel-tags">
+                <!-- JS inyecta <li class="map-panel__tag"> aquí -->
+              </ul>
+            </div>
+
+          </section>
+
+          <!-- Footer del panel -->
+          <footer class="map-panel__footer">
+            <button
+              class="map-panel__btn-favorito"
+              id="mapa-panel-btn-favorito"
+              type="button"
+              aria-pressed="false"
+            >
+              <span class="map-panel__btn-favorito-icon" aria-hidden="true">🤍</span>
+              <span class="map-panel__btn-favorito-label">Agregar a favoritos</span>
+            </button>
+            <button
+              class="map-panel__btn-cerrar"
+              id="mapa-panel-btn-cerrar"
+              type="button"
+              aria-label="Cerrar detalle"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </footer>
+
+        </article>
+      </aside>
 
     </section>
 
   </main>
 
-  <!-- ===== FOOTER DEL SITIO ===== -->
+  <!-- ═══ FOOTER ═══ -->
   <footer class="site-footer">
     <p class="site-footer__copy">
       &copy; <time datetime="2026">2026</time> Secretos de la Ciudad
     </p>
   </footer>
+
+  <!-- Script del mapa — se cargará desde scripts/map.js -->
+  <script src="../scripts/places.js"></script>
 
 </body>
 </html>
