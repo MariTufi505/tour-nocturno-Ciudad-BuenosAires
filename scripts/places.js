@@ -140,8 +140,15 @@ function renderizarCards(lugares, contenedor) {
             tooltip.style.display = 'none';
         });
 
-        // 4. Lógica del Click (Mostrar info extendida)
         card.addEventListener('click', (e) => {
+
+            if (e.target.classList.contains('btn-favorito')) return;
+
+            abrirModal(lugar);
+
+        });
+        // 4. Lógica del Click (Mostrar info extendida)
+       /* card.addEventListener('click', (e) => {
             // Evitamos que al presionar el botón de favorito se abra la tarjeta
             if (e.target.classList.contains('btn-favorito')) return;
 
@@ -161,7 +168,7 @@ function renderizarCards(lugares, contenedor) {
                 
                 btnExpandir.textContent = 'Ver más +';
             }
-        });
+        });*/
 
         // 5. Lógica del Botón Favorito (LocalStorage)
         const btnFavorito = card.querySelector('.btn-favorito');
@@ -177,22 +184,98 @@ function renderizarCards(lugares, contenedor) {
 // Función para añadir/quitar del LocalStorage
 function manejarFavorito(idLugar, botonElemento) {
     const indice = favoritos.indexOf(idLugar);
-
     if (indice === -1) {
-        // No está en favoritos, lo agregamos
         favoritos.push(idLugar);
-        botonElemento.textContent = '❤️';
-        botonElemento.classList.add('card__bookmark--saved');
-        botonElemento.setAttribute('aria-label', 'Quitar de favoritos');
-        botonElemento.setAttribute('title', 'Quitar de favoritos');
     } else {
-        // Ya está en favoritos, lo quitamos
         favoritos.splice(indice, 1);
-        botonElemento.textContent = '🤍';
-        botonElemento.classList.remove('card__bookmark--saved');
-        botonElemento.setAttribute('aria-label', 'Agregar a favoritos');
-        botonElemento.setAttribute('title', 'Agregar a favoritos');
     }
 
-    localStorage.setItem('lugaresFavoritos', JSON.stringify(favoritos));
+    const estaEnFavoritos = favoritos.includes(idLugar);
+
+    if (botonElemento.classList.contains('place-detail__favorite')) {
+
+        botonElemento.textContent = estaEnFavoritos
+            ? '❤️ En favoritos'
+            : '♡ Agregar a favoritos';
+
+    } else {
+        botonElemento.textContent = estaEnFavoritos
+            ? '❤️'
+            : '🤍';
+
+        botonElemento.classList.toggle(
+            'card__bookmark--saved',
+            estaEnFavoritos
+        );
+
+        botonElemento.setAttribute(
+            'aria-label',
+            estaEnFavoritos
+                ? 'Quitar de favoritos'
+                : 'Agregar a favoritos'
+        );
+
+        botonElemento.setAttribute(
+            'title',
+            estaEnFavoritos
+                ? 'Quitar de favoritos'
+                : 'Agregar a favoritos'
+        );
+    }
+
+    localStorage.setItem(
+        'lugaresFavoritos',
+        JSON.stringify(favoritos)
+    );
+}
+
+function abrirModal(lugar) {
+    const modal = document.getElementById('placeModal');
+    const contenido = document.getElementById('placeModalContent');
+
+    contenido.innerHTML = `
+        <article class="place-detail">
+            <button class="place-detail__close">×</button>
+
+            <button class="place-detail__favorite">
+            ${favoritos.includes(lugar.id)
+                ? '❤️ En favoritos'
+                : '♡ Agregar a favoritos'}
+            </button>
+
+            <div class="place-detail__image">
+                Imagen
+            </div>
+
+            <div class="place-detail__info">
+                <h2>${lugar.nombre}</h2>
+
+                <p>${lugar.informacion}</p>
+
+                <p><strong>Horario:</strong> ${lugar.horarios_nocturnos}</p>
+
+                <p><strong>Precio:</strong> ${lugar.precio}</p>
+
+                <p><strong>Ubicación:</strong> ${lugar.ubicacion_exacta}</p>
+            </div>
+        </article>
+    `;
+
+    modal.classList.add('place-modal--open');
+    console.log('modal abierto');
+
+    const btnCerrar = contenido.querySelector('.place-detail__close');
+    btnCerrar.addEventListener('click', cerrarModal);
+
+    const btnFavoritoModal = contenido.querySelector('.place-detail__favorite');
+    btnFavoritoModal.addEventListener('click', () => {
+    manejarFavorito(lugar.id, btnFavoritoModal);
+});
+    
+}
+
+function cerrarModal() {
+    console.log('modal cerrado');
+    const modal = document.getElementById('placeModal');
+    modal.classList.remove('place-modal--open');
 }

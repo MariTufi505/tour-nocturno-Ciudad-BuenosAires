@@ -390,3 +390,44 @@
 ::-webkit-scrollbar-track  { background: var(--color-bg); }
 ::-webkit-scrollbar-thumb  { background: rgba(124, 58, 237, 0.4); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--color-purple); }
+
+
+.place-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+
+  display: none;
+  place-items: center;
+
+  padding: 2rem;
+  background: rgba(5, 5, 10, 0.72);
+}
+
+.place-modal--open {
+  display: grid;
+}
+
+.place-modal__content {
+  width: min(92vw, 720px);
+  max-height: 82vh;
+  overflow-y: auto;
+  position: relative;
+  background: #111018;
+  border: 1px solid rgba(124, 58, 237, 0.35);
+  border-radius: 1.5rem;
+  padding: 2rem;
+}
+
+.place-detail__close {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.25rem;
+  color: var(--color-purple);
+  background: transparent;
+  border: none;
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+}
