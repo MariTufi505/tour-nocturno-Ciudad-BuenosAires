@@ -1,0 +1,443 @@
+/* ==========================================================================
+   ESTILOS ESPECÍFICOS: PÁGINA DEL MAPA (map.html)
+   ========================================================================== */
+
+/* ────────────────────────────────────────────────────────────
+   1. LAYOUT PRINCIPAL DEL MAPA
+   ──────────────────────────────────────────────────────────── */
+.site-layout--map {
+  /* Compensa el header fijo y da margen superior */
+  padding-top: calc(var(--header-h) + var(--space-8));
+  padding-bottom: var(--space-10);
+  min-height: 100vh;
+  
+  /* Centrado general */
+  max-width: var(--max-width);
+  margin-inline: auto;
+  padding-inline: var(--space-6);
+  
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+/* ────────────────────────────────────────────────────────────
+   2. ENCABEZADO (HEADER DEL MAPA)
+   ──────────────────────────────────────────────────────────── */
+.map-header {
+  text-align: center;
+  max-width: 700px;
+  margin-inline: auto;
+  animation: fadeIn 0.6s ease-out forwards;
+}
+
+.map-header__eyebrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+  color: var(--color-purple);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.map-header__eyebrow-line {
+  width: 40px;
+  height: 1px;
+  background: var(--color-purple);
+  border: none;
+}
+
+.map-header__title {
+  font-family: 'Special Elite', var(--font-display);
+  font-size: var(--text-4xl);
+  line-height: 1.1;
+  color: var(--color-text);
+  margin-bottom: var(--space-4);
+  text-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.map-header__title-highlight {
+  color: var(--color-purple);
+  font-style: normal;
+  text-shadow: 0 0 15px var(--color-purple-glow);
+}
+
+.map-header__description {
+  color: var(--color-text-muted);
+  font-size: var(--text-lg);
+  line-height: 1.6;
+}
+
+/* ────────────────────────────────────────────────────────────
+   3. ZONA PRINCIPAL: GRID (FILTROS + MAPA + PANEL)
+   ──────────────────────────────────────────────────────────── */
+.map-layout {
+  display: grid;
+  /* 3 Columnas: Filtros (240px) | Mapa (fluido) | Panel de Detalles (320px) */
+  grid-template-columns: 240px 1fr 320px;
+  gap: var(--space-6);
+  align-items: start;
+  min-height: 650px; /* Altura mínima de la zona */
+}
+
+/* ────────────────────────────────────────────────────────────
+   4. BARRA DE FILTROS LATERAL
+   ──────────────────────────────────────────────────────────── */
+.map-filters {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  position: sticky;
+  top: calc(var(--header-h) + var(--space-4)); /* Queda fija al hacer scroll */
+}
+
+.map-filters__title {
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--color-text);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--space-2);
+}
+
+.map-filters__nav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+/* Nota: JS sobreescribe algunos estilos del botón, pero estos son los base */
+.map-filter-btn {
+  text-align: left;
+  border-radius: var(--radius-full) !important;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  transition: all var(--transition-base);
+}
+
+.map-filter-btn:hover {
+  border-color: var(--color-purple) !important;
+  box-shadow: 0 0 10px var(--color-purple-soft);
+}
+
+.map-filters__footer {
+  margin-top: var(--space-4);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.map-filters__count strong {
+  color: var(--color-purple);
+  font-size: var(--text-lg);
+}
+
+/* ────────────────────────────────────────────────────────────
+   5. CONTENEDOR DEL MAPA (SVG / CANVAS)
+   ──────────────────────────────────────────────────────────── */
+.map-stage {
+  position: relative;
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.6);
+  height: 100%;
+  min-height: 600px; /* ¡ESTO SOLUCIONA QUE NO SE VEA EL MAPA! */
+}
+
+/* El contenedor exacto donde JS inyecta el SVG */
+.map-stage__canvas {
+  flex-grow: 1;
+  width: 100%;
+  height: 100%;
+  min-height: 600px;
+  position: relative;
+  outline: none;
+}
+
+/* Estados de Carga y Error */
+.map-stage__loading,
+.map-stage__error {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(17, 17, 24, 0.8);
+  backdrop-filter: blur(4px);
+  z-index: 10;
+  color: var(--color-text);
+}
+
+.map-stage__loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--color-border);
+  border-top-color: var(--color-purple);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: var(--space-3);
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ────────────────────────────────────────────────────────────
+   6. PANEL LATERAL (DETALLE DEL LUGAR)
+   ──────────────────────────────────────────────────────────── */
+.map-panel {
+  background: rgba(17, 17, 24, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  height: 100%;
+  max-height: 800px;
+  overflow-y: auto; /* Permite scroll si la info es muy larga */
+  position: relative;
+  box-shadow: var(--shadow-lg);
+}
+
+/* Personalizar la barra de scroll del panel */
+.map-panel::-webkit-scrollbar { width: 6px; }
+.map-panel::-webkit-scrollbar-track { background: transparent; }
+.map-panel::-webkit-scrollbar-thumb { background: var(--color-purple-soft); border-radius: 10px; }
+.map-panel::-webkit-scrollbar-thumb:hover { background: var(--color-purple); }
+
+/* Estado vacío */
+.map-panel__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  height: 100%;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  gap: var(--space-4);
+  padding: var(--space-4);
+}
+
+.map-panel__empty-icon {
+  font-size: var(--text-4xl);
+  opacity: 0.5;
+}
+
+/* Animación de entrada de la info */
+.map-panel__detail {
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+.map-panel__badge {
+  display: inline-block;
+  color: var(--color-purple);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--space-2);
+}
+
+.map-panel__nombre {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  color: var(--color-white);
+  line-height: 1.2;
+  margin-bottom: var(--space-2);
+}
+
+.map-panel__ubicacion {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-text-faint);
+  font-size: var(--text-sm);
+  margin-bottom: var(--space-4);
+}
+
+.map-panel__info {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  line-height: 1.6;
+  margin-bottom: var(--space-6);
+}
+
+/* Metadata (Horarios, Precio, Accesibilidad) */
+.map-panel__meta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
+  padding: var(--space-4);
+  background: var(--color-surface-2);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+}
+
+.map-panel__meta-item {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  font-size: var(--text-sm);
+}
+
+.map-panel__meta-label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
+.map-panel__meta-label svg { color: var(--color-purple); }
+.map-panel__meta-value { text-align: right; color: var(--color-text); }
+
+/* Recomendaciones y Tags */
+.map-panel__recomendaciones-title,
+.map-panel__tags-title {
+  font-size: var(--text-base);
+  color: var(--color-white);
+  margin-bottom: var(--space-3);
+}
+
+.map-panel__recomendaciones-list {
+  list-style: none;
+  padding-left: 0;
+  margin-bottom: var(--space-6);
+}
+
+.map-panel__recomendaciones-list li {
+  position: relative;
+  padding-left: var(--space-4);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-2);
+}
+.map-panel__recomendaciones-list li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: var(--color-purple);
+  font-weight: bold;
+}
+
+/* Nota: JS inyecta estilos en línea para los tags, los respetamos */
+.map-panel__tags-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-bottom: var(--space-6);
+}
+
+/* Footer del panel (Botones) */
+.map-panel__footer {
+  display: flex;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border);
+}
+
+.map-panel__btn-favorito {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  transition: all var(--transition-base);
+}
+
+.map-panel__btn-favorito:hover {
+  background: var(--color-purple-soft);
+  border-color: var(--color-purple);
+}
+
+.map-panel__btn-cerrar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-3);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  color: var(--color-text-muted);
+  transition: all var(--transition-base);
+}
+
+.map-panel__btn-cerrar:hover {
+  background: rgba(255, 0, 0, 0.1);
+  color: #ff4444;
+}
+
+/* ────────────────────────────────────────────────────────────
+   7. RESPONSIVE (MÓVILES Y TABLETS)
+   ──────────────────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .map-layout {
+    /* Pasa el panel de detalles abajo del mapa */
+    grid-template-columns: 200px 1fr;
+    grid-template-rows: auto auto;
+  }
+  
+  .map-panel {
+    grid-column: 1 / -1; /* Ocupa todo el ancho en la segunda fila */
+    max-height: none;
+    height: auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .map-layout {
+    /* Todo se apila en 1 sola columna */
+    grid-template-columns: 1fr;
+  }
+
+  .map-filters {
+    position: static;
+    padding: var(--space-4);
+  }
+
+  .map-filters__nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .map-filter-btn {
+    flex: 1 1 auto;
+    text-align: center;
+  }
+
+  .map-stage {
+    min-height: 450px;
+  }
+  
+  .map-stage__canvas {
+    min-height: 450px;
+  }
+
+  .map-header__title {
+    font-size: clamp(2rem, 8vw, 2.5rem);
+  }
+}

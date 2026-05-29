@@ -1,7 +1,11 @@
 // ==========================================
 // CONFIGURACIÓN GLOBAL Y LOCALSTORAGE
 // ==========================================
-const URL_JSON = 'data/places.json';
+// Si la página incluye "map.html" en la URL o estamos en una subcarpeta, subimos un nivel
+const paginaActual = window.location.pathname;
+const URL_JSON = paginaActual.includes('map.html') || paginaActual.includes('places.html') 
+    ? '../data/places.json' 
+    : './data/places.json';
 // Obtenemos los favoritos del localStorage o inicializamos un array vacío
 let favoritos = JSON.parse(localStorage.getItem('lugaresFavoritos')) || [];
 let datosLugares = []; // Array donde se guardarán los objetos del JSON
