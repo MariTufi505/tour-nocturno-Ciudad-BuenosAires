@@ -3,9 +3,7 @@
 // ==========================================
 // Si la página incluye "map.html" en la URL o estamos en una subcarpeta, subimos un nivel
 const paginaActual = window.location.pathname;
-const URL_JSON = paginaActual.includes('map.html') || paginaActual.includes('places.html') 
-    ? '../data/places.json' 
-    : './data/places.json';
+const URL_JSON = "/data/places.json";
 // Obtenemos los favoritos del localStorage o inicializamos un array vacío
 let favoritos = JSON.parse(localStorage.getItem('lugaresFavoritos')) || [];
 let datosLugares = []; // Array donde se guardarán los objetos del JSON
@@ -14,34 +12,7 @@ let datosLugares = []; // Array donde se guardarán los objetos del JSON
 // Variable global para el tooltip
 let tooltip; 
 
-document.addEventListener('DOMContentLoaded', () => {
-    // 1. Crear el tooltip
-    tooltip = document.createElement('div');
-    tooltip.id = 'tooltip-resena';
-    Object.assign(tooltip.style, {
-        position: 'absolute',
-        display: 'none',
-        backgroundColor: 'rgba(0, 0, 0, 0.9)',
-        color: '#fff',
-        padding: '12px',
-        borderRadius: '8px',
-        pointerEvents: 'none',
-        zIndex: '1000',
-        maxWidth: '250px',
-        fontSize: '0.9rem',
-        boxShadow: '0 4px 6px rgba(0,0,0,0.3)'
-    });
-    document.body.appendChild(tooltip);
 
-    // 2. Cargar los contenedores
-    const contenedorIndex = document.getElementById('contenedor-cards-index');
-    
-    // Verificamos que el contenedor exista antes de intentar cargar los datos
-    // Esto evita errores en consola si usas este mismo JS en otras páginas (como map.html)
-    if (contenedorIndex) {
-        cargarDatos(contenedorIndex);
-    }
-});
 
 // ==========================================
 // LÓGICA PRINCIPAL
@@ -183,32 +154,62 @@ function manejarFavorito(idLugar, botonElemento) {
 // LÓGICA DEL MAPA INTERACTIVO (map.html)
 // ==========================================
 
+// DESPUÉS — un solo listener
 document.addEventListener('DOMContentLoaded', () => {
+    tooltip = document.createElement('div');
+    Object.assign(tooltip.style, {
+        position: 'absolute',
+        display: 'none',
+        backgroundColor: 'rgba(0, 0, 0, 0.9)',
+        color: '#fff',
+        padding: '12px',
+        borderRadius: '8px',
+        pointerEvents: 'none',
+        zIndex: '1000',
+        maxWidth: '250px',
+        fontSize: '0.9rem',
+        boxShadow: '0 4px 6px rgba(0,0,0,0.3)'
+    });
+    document.body.appendChild(tooltip);
+
+    const contenedorIndex = document.getElementById('contenedor-cards-index');
+    if (contenedorIndex) {
+        cargarDatos(contenedorIndex);
+    }
+
     const mapaContenedor = document.getElementById('mapa-contenedor');
-    
-    // Solo ejecutamos la lógica del mapa si estamos en map.html
     if (mapaContenedor) {
         inicializarMapaApp();
     }
 });
+
+
 
 async function inicializarMapaApp() {
     const loading = document.getElementById('mapa-loading');
     const errorContenedor = document.getElementById('mapa-error');
     
     try {
-        const respuesta = await fetch(URL_JSON);
+        console.log('1. Iniciando fetch...');
+        const respuesta = await fetch('/data/places.json');
         if (!respuesta.ok) throw new Error("Error al cargar el JSON del mapa");
         
+        console.log('2. Fetch OK, parseando JSON...');
         const lugares = await respuesta.json();
         
-        // Ocultar loading
+        console.log('3. JSON OK, cantidad de lugares:', lugares.length);
         if (loading) loading.style.display = 'none';
         
-        // Configurar la interfaz del mapa
+        console.log('4. Configurando filtros...');
         configurarFiltrosMapa(lugares);
+        
+        console.log('5. Renderizando mapa...');
         renderizarMapaSvg(lugares, 'Todos');
+        
+        console.log('6. Configurando botón cerrar...');
         configurarBotonCerrarPanel();
+        
+        console.log('7. Todo OK');
 
     } catch (error) {
         console.error("Error cargando el mapa:", error);
@@ -216,6 +217,7 @@ async function inicializarMapaApp() {
         if (errorContenedor) errorContenedor.hidden = false;
     }
 }
+
 
 // 1. Configuración de Filtros
 function configurarFiltrosMapa(lugares) {
