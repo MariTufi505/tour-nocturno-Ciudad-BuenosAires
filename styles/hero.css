@@ -72,12 +72,13 @@
   grid-template-columns: 1fr 1fr;
   align-items: center;
   gap: 4rem;
+  transform: translateY(-1.5rem);
 }
 
 .hero__visual {
   position: relative;
   width: 100%;
-  max-width: 6400px;
+  max-width: 640px;
   justify-self: end;
   border-radius: 2rem;
   overflow: hidden;
@@ -179,11 +180,11 @@
 }
 
 .hero__title {
-  font-family: 'Special Elite', serif;
-  font-size: clamp(2.6rem, 5vw, 4.4rem);
-  font-weight: 400;
-  line-height: 0.95;
-  letter-spacing: -0.04em;
+  font-family: "Averia Serif Libre", serif;
+  font-size: clamp(2.8rem, 5.5vw, 4.8rem);
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
   color: #e8e3dc;
   text-shadow: 
     0 0 12px rgba(0,0,0,0.78),
@@ -203,9 +204,10 @@
 /* Descripción hero */
 .hero__description {
   font-size: 1.05rem;
-  color: rgba(220, 215, 230, 0.72);
+  color: rgba(220, 215, 230, 0.82);
   max-width: 430px;
   line-height: 1.8;
+  margin-top: 1.5rem;
   margin-bottom: 3rem;
   letter-spacing: 0.02em;
 }

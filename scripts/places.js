@@ -62,7 +62,7 @@ function renderizarCards(lugares, contenedor) {
     contenedor.innerHTML = ''; // Limpiamos el contenedor
 
     // Limitamos el array a 3 elementos si estamos en el inicio
-    const lugaresAMostrar = contenedor.id === 'contenedor-cards-index' ? lugares.slice(0, 3) : lugares;
+    const lugaresAMostrar = contenedor.id === 'contenedor-cards-index' ? lugares.slice(0, 4) : lugares;
 
     lugaresAMostrar.forEach(lugar => {
         const card = document.createElement('article');
