@@ -4,10 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lugares</title>
-    <link rel="stylesheet" href="./styles/global.css">
-    <link rel="stylesheet" href="./styles/hero.css">
-    <link rel="stylesheet" href="./styles/carousel.css">
-    <link rel="stylesheet" href="./styles/style.css">
+    <style>
+        /* CSS inyectado para forzar la visualización de 3 cards en fila */
+        #contenedor-cards-index {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            width: 100%;
+            margin-top: 20px;
+        }
+        
+        /* Diseño responsivo para tablets y móviles */
+        @media (max-width: 900px) {
+            #contenedor-cards-index {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        @media (max-width: 600px) {
+            #contenedor-cards-index {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    <link rel="icon" href="data:,">
 </head>
 <body>
 
@@ -240,6 +259,6 @@
     </p>
   </footer>
 
-<script src="./scripts/app.js"></script>
+  <script src="scripts/places.js"></script>
 </body>
 </html>
