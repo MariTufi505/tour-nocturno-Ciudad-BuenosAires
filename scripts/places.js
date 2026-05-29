@@ -1,7 +1,7 @@
 // ==========================================
 // CONFIGURACIÓN GLOBAL Y LOCALSTORAGE
 // ==========================================
-const URL_JSON = 'data/places.json';
+const URL_JSON = '/data/places.json';
 // Obtenemos los favoritos del localStorage o inicializamos un array vacío
 let favoritos = JSON.parse(localStorage.getItem('lugaresFavoritos')) || [];
 let datosLugares = []; // Array donde se guardarán los objetos del JSON
@@ -31,11 +31,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 2. Cargar los contenedores
     const contenedorIndex = document.getElementById('contenedor-cards-index');
-    
+    const contenedorPlaces = document.getElementById('contenedor-cards-places');
     // Verificamos que el contenedor exista antes de intentar cargar los datos
     // Esto evita errores en consola si usas este mismo JS en otras páginas (como map.html)
     if (contenedorIndex) {
         cargarDatos(contenedorIndex);
+    }
+
+    if (contenedorPlaces) {
+    cargarDatos(contenedorPlaces);
     }
 });
 

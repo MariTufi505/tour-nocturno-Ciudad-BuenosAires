@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lugares</title>
-    <link rel="stylesheet" href="/styles/style.css">
+    <link rel="stylesheet" href="../styles/global.css">
+    <link rel="stylesheet" href="../styles/carousel.css">
+    <link rel="stylesheet" href="../styles/places.css">
 </head>
 <body>
 
@@ -125,91 +127,7 @@
         <p class="places-explorer__count" aria-live="polite">37 lugares encontrados</p>
  
         <!-- Lista de lugares para explorar -->
-        <ol class="place-list" aria-label="Lista de lugares">
-
-        <!-- Items Que deberían ser inyectados con JS. Aparecen 4 unicamente a modo de visualización. -->
- 
-          <li class="place-list__item">
-            <article class="place-card" aria-labelledby="place-1-name">
-              <figure class="place-card__figure">
-                <!-- img class="place-card__image" src="" alt="Foto del lugar 1" -->
-              </figure>
-              <section class="place-card__body">
-                <h2 class="place-card__name" id="place-1-name">Nombre del lugar</h2>
-                <address class="place-card__location">
-                  <a class="place-card__location-link" href="#">Barrio</a>
-                </address>
-                <p class="place-card__description">Descripción breve del lugar. Contá qué lo hace especial y por qué vale la pena visitarlo.</p>
-              </section>
-              <aside class="place-card__actions" aria-label="Acciones">
-                <button class="save-button" type="button" aria-label="Guardar lugar 1">
-                  &#128278;
-                </button>
-              </aside>
-            </article>
-          </li>
- 
-          <li class="place-list__item">
-            <article class="place-card" aria-labelledby="place-2-name">
-              <figure class="place-card__figure">
-                <!-- img class="place-card__image" src="" alt="Foto del lugar 2" -->
-              </figure>
-              <section class="place-card__body">
-                <h2 class="place-card__name" id="place-2-name">Nombre del lugar</h2>
-                <address class="place-card__location">
-                  <a class="place-card__location-link" href="#">Barrio</a>
-                </address>
-                <p class="place-card__description">Descripción breve del lugar. Contá qué lo hace especial y por qué vale la pena visitarlo.</p>
-              </section>
-              <aside class="place-card__actions" aria-label="Acciones">
-                <button class="save-button" type="button" aria-label="Guardar lugar 2">
-                  &#128278;
-                </button>
-              </aside>
-            </article>
-          </li>
- 
-          <li class="place-list__item">
-            <article class="place-card" aria-labelledby="place-3-name">
-              <figure class="place-card__figure">
-                <!-- img class="place-card__image" src="" alt="Foto del lugar 3" -->
-              </figure>
-              <section class="place-card__body">
-                <h2 class="place-card__name" id="place-3-name">Nombre del lugar</h2>
-                <address class="place-card__location">
-                  <a class="place-card__location-link" href="#">Barrio</a>
-                </address>
-                <p class="place-card__description">Descripción breve del lugar. Contá qué lo hace especial y por qué vale la pena visitarlo.</p>
-              </section>
-              <aside class="place-card__actions" aria-label="Acciones">
-                <button class="save-button" type="button" aria-label="Guardar lugar 3">
-                  &#128278;
-                </button>
-              </aside>
-            </article>
-          </li>
- 
-          <li class="place-list__item">
-            <article class="place-card" aria-labelledby="place-4-name">
-              <figure class="place-card__figure">
-                <!-- img class="place-card__image" src="" alt="Foto del lugar 4" -->
-              </figure>
-              <section class="place-card__body">
-                <h2 class="place-card__name" id="place-4-name">Nombre del lugar</h2>
-                <address class="place-card__location">
-                  <a class="place-card__location-link" href="#">Barrio</a>
-                </address>
-                <p class="place-card__description">Descripción breve del lugar. Contá qué lo hace especial y por qué vale la pena visitarlo.</p>
-              </section>
-              <aside class="place-card__actions" aria-label="Acciones">
-                <button class="save-button" type="button" aria-label="Guardar lugar 4">
-                  &#128278;
-                </button>
-              </aside>
-            </article>
-          </li>
- 
-        </ol>
+        <ol id="contenedor-cards-places" class="place-list" aria-label="Lista de lugares"></ol>
  
       </section>
 </main>
@@ -220,5 +138,11 @@
         &copy; <time datetime="2026">2026</time> Secretos de la Ciudad
       </p>
     </footer>
+    <script src="../scripts/places.js"></script>
+    <script src="../scripts/places-modal.js"></script>
+
+    <div class="place-modal" id="placeModal">
+    <div class="place-modal__content" id="placeModalContent"></div>
+    </div>
 </body>
 </html>
