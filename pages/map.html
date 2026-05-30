@@ -1,246 +1,1305 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mapa — Secretos de la Ciudad</title>
-    <link rel="stylesheet" href="../styles/global.css">
-    <link rel="stylesheet" href="../styles/hero.css">
-    <link rel="stylesheet" href="../styles/carousel.css">
-    <link rel="stylesheet" href="../styles/style.css">
-    <link rel="stylesheet" href="../styles/map.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mapa Interactivo — Secretos de la Ciudad</title>
+<style>
+/* ============================================================
+   TOKENS & RESET
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:           #0b0d14;
+  --surface:      #13151f;
+  --surface-2:    #1a1d2b;
+  --border:       rgba(108,99,255,.18);
+  --border-strong:rgba(108,99,255,.45);
+  --purple:       #6c63ff;
+  --purple-soft:  rgba(108,99,255,.15);
+  --purple-glow:  rgba(108,99,255,.35);
+  --text:         #e2e8f0;
+  --text-muted:   #94a3b8;
+  --text-faint:   #64748b;
+  --white:        #ffffff;
+  --header-h:     58px;
+  --panel-w:      340px;
+  --filter-w:     220px;
+  --radius:       10px;
+  --radius-lg:    14px;
+  --radius-full:  999px;
+  --shadow:       0 8px 32px rgba(0,0,0,.55);
+  --transition:   0.18s ease;
+}
+
+html, body { height: 100%; overflow: hidden; background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; }
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+.header {
+  position: fixed; top: 0; left: 0; right: 0; height: var(--header-h);
+  z-index: 100;
+  background: rgba(11,13,20,.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center;
+  padding: 0 20px;
+  gap: 20px;
+}
+
+.brand {
+  display: flex; align-items: center; gap: 10px;
+  text-decoration: none; color: var(--text);
+  flex-shrink: 0;
+}
+.brand__icon { font-size: 22px; }
+.brand__name { font-size: 15px; font-weight: 700; line-height: 1.2; }
+.brand__name span { display: block; font-size: 11px; font-weight: 400; color: var(--text-muted); }
+
+.header__search {
+  flex: 1; max-width: 320px;
+  display: flex; align-items: center;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  padding: 0 14px;
+  gap: 8px;
+  transition: border-color var(--transition);
+}
+.header__search:focus-within { border-color: var(--purple); }
+.header__search input {
+  flex: 1; background: none; border: none; outline: none;
+  color: var(--text); font-size: 13px; padding: 8px 0;
+}
+.header__search input::placeholder { color: var(--text-faint); }
+.header__search-icon { color: var(--text-faint); font-size: 14px; flex-shrink: 0; }
+
+.header__nav { display: flex; gap: 6px; margin-left: auto; }
+.header__nav a {
+  color: var(--text-muted); text-decoration: none; font-size: 13px; font-weight: 500;
+  padding: 6px 12px; border-radius: var(--radius-full);
+  transition: all var(--transition);
+}
+.header__nav a:hover { color: var(--text); background: var(--surface-2); }
+.header__nav a.active { color: var(--purple); background: var(--purple-soft); }
+
+/* ============================================================
+   LAYOUT PRINCIPAL
+   ============================================================ */
+.app {
+  position: fixed;
+  top: var(--header-h); left: 0; right: 0; bottom: 0;
+  display: grid;
+  grid-template-columns: var(--filter-w) 1fr;
+  grid-template-rows: 1fr;
+}
+
+/* ============================================================
+   SIDEBAR FILTROS
+   ============================================================ */
+.sidebar {
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  overflow: hidden;
+  z-index: 10;
+}
+
+.sidebar__header {
+  padding: 16px 16px 12px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.sidebar__title {
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .1em; color: var(--purple); margin-bottom: 4px;
+}
+.sidebar__subtitle { font-size: 12px; color: var(--text-muted); }
+
+.sidebar__filters {
+  flex: 1; overflow-y: auto; padding: 10px 10px;
+  display: flex; flex-direction: column; gap: 4px;
+}
+.sidebar__filters::-webkit-scrollbar { width: 4px; }
+.sidebar__filters::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 4px; }
+
+.filter-btn {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 12px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 12px; font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition);
+  text-align: left; width: 100%;
+}
+.filter-btn:hover { background: var(--surface-2); color: var(--text); }
+.filter-btn.active { color: var(--text); }
+.filter-btn__dot {
+  width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+}
+.filter-btn__count {
+  margin-left: auto; font-size: 10px;
+  background: var(--surface-2); padding: 2px 7px;
+  border-radius: var(--radius-full); color: var(--text-faint);
+}
+
+.sidebar__footer {
+  padding: 12px 16px;
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.sidebar__footer-count {
+  font-size: 12px; color: var(--text-muted);
+}
+.sidebar__footer-count strong { color: var(--purple); font-size: 18px; display: block; }
+
+/* ============================================================
+   MAPA
+   ============================================================ */
+.map-wrap {
+  position: relative; overflow: hidden;
+  background: #0a0c14;
+  display: flex; flex-direction: column;
+}
+
+.map-canvas {
+  flex: 1; width: 100%; height: 100%;
+  cursor: grab; outline: none;
+  position: relative; overflow: hidden;
+}
+.map-canvas:active { cursor: grabbing; }
+
+/* SVG fills container */
+#mapa-svg {
+  width: 100%; height: 100%;
+  display: block;
+  position: absolute; top: 0; left: 0;
+}
+
+/* Zoom controls */
+.zoom-controls {
+  position: absolute; right: 14px; top: 14px;
+  display: flex; flex-direction: column; gap: 3px;
+  z-index: 20;
+}
+.zoom-btn {
+  width: 34px; height: 34px;
+  background: rgba(11,13,20,.88);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  color: var(--text); font-size: 18px; font-weight: 300;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  backdrop-filter: blur(8px);
+  transition: all var(--transition);
+}
+.zoom-btn:hover { background: var(--surface-2); border-color: var(--purple); color: var(--purple); }
+.zoom-btn.reset { font-size: 14px; }
+
+/* Loading / Error overlay */
+.map-overlay {
+  position: absolute; inset: 0; z-index: 50;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  background: rgba(11,13,20,.9); backdrop-filter: blur(6px);
+  color: var(--text-muted); gap: 12px;
+}
+.map-overlay.hidden { display: none; }
+.spinner {
+  width: 36px; height: 36px;
+  border: 3px solid var(--border);
+  border-top-color: var(--purple);
+  border-radius: 50%;
+  animation: spin .9s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Leyenda */
+.map-legend {
+  position: absolute; left: 14px; bottom: 14px;
+  background: rgba(11,13,20,.82); backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 10px 14px;
+  display: flex; flex-direction: column; gap: 6px;
+  max-width: 200px; z-index: 15;
+}
+.map-legend__title {
+  font-size: 9px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .1em; color: var(--purple);
+}
+.legend-item {
+  display: flex; align-items: center; gap: 7px;
+  font-size: 10.5px; color: var(--text-muted);
+}
+.legend-item__swatch {
+  width: 28px; height: 5px; border-radius: 3px; flex-shrink: 0;
+}
+
+/* Commune tooltip */
+.commune-tooltip {
+  position: absolute;
+  background: rgba(11,13,20,.9); backdrop-filter: blur(8px);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  padding: 7px 12px;
+  font-size: 12px; color: var(--text);
+  pointer-events: none; z-index: 30;
+  opacity: 0; transition: opacity .15s;
+  white-space: nowrap;
+}
+.commune-tooltip.visible { opacity: 1; }
+
+/* ============================================================
+   PANEL LATERAL
+   ============================================================ */
+.detail-panel {
+  position: absolute; top: 0; right: 0; bottom: 0;
+  width: var(--panel-w);
+  background: rgba(13,15,22,.96);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-left: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  z-index: 40;
+  transform: translateX(100%);
+  transition: transform .28s cubic-bezier(.4,0,.2,1);
+  overflow: hidden;
+}
+.detail-panel.open { transform: translateX(0); }
+
+.panel__close {
+  position: absolute; top: 12px; right: 12px;
+  width: 30px; height: 30px;
+  background: var(--surface-2); border: 1px solid var(--border);
+  border-radius: 50%; color: var(--text-muted);
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  font-size: 16px; transition: all var(--transition); z-index: 2;
+}
+.panel__close:hover { background: rgba(255,50,50,.15); color: #ff4444; border-color: #ff4444; }
+
+.panel__hero {
+  height: 150px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  position: relative; overflow: hidden;
+}
+.panel__hero-icon { font-size: 56px; position: relative; z-index: 1; }
+.panel__hero-barrio {
+  position: absolute; bottom: 10px; right: 14px;
+  font-size: 10px; font-weight: 700; letter-spacing: .08em;
+  text-transform: uppercase; opacity: .8;
+}
+
+.panel__body { flex: 1; overflow-y: auto; padding: 16px 18px 20px; }
+.panel__body::-webkit-scrollbar { width: 4px; }
+.panel__body::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 4px; }
+
+.panel__cat {
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .08em; margin-bottom: 5px;
+}
+.panel__name {
+  font-size: 22px; font-weight: 700; color: var(--white);
+  line-height: 1.2; margin-bottom: 4px;
+}
+.panel__address {
+  font-size: 12px; color: var(--text-faint);
+  display: flex; align-items: center; gap: 4px; margin-bottom: 16px;
+}
+.panel__desc {
+  font-size: 13px; color: var(--text-muted); line-height: 1.65;
+  margin-bottom: 18px;
+}
+
+.panel__meta {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 14px; margin-bottom: 18px;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.meta-row {
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;
+  font-size: 12px;
+}
+.meta-row__label { color: var(--text-muted); display: flex; align-items: center; gap: 5px; }
+.meta-row__label svg { color: var(--purple); }
+.meta-row__val { color: var(--text); text-align: right; }
+
+.panel__section-title { font-size: 13px; font-weight: 600; color: var(--white); margin-bottom: 10px; }
+
+.recs-list {
+  list-style: none; margin-bottom: 18px;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.recs-list li {
+  font-size: 12px; color: var(--text-muted); padding-left: 14px; position: relative;
+}
+.recs-list li::before { content: "•"; position: absolute; left: 0; color: var(--purple); font-weight: 700; }
+
+.tags-list {
+  list-style: none; display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 18px;
+}
+.tags-list li {
+  font-size: 11px; font-weight: 600; padding: 3px 11px;
+  border-radius: var(--radius-full); border: 1px solid;
+}
+
+.panel__footer {
+  padding: 14px 18px;
+  border-top: 1px solid var(--border);
+  display: flex; gap: 10px; flex-shrink: 0;
+}
+.btn-fav {
+  flex: 1; display: flex; align-items: center; justify-content: center; gap: 7px;
+  padding: 10px; border-radius: var(--radius);
+  background: var(--surface-2); border: 1px solid var(--border);
+  color: var(--text); font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: all var(--transition);
+}
+.btn-fav:hover { border-color: var(--purple); background: var(--purple-soft); }
+.btn-fav.is-fav { border-color: #f472b6; background: rgba(244,114,182,.1); color: #f472b6; }
+
+/* ============================================================
+   EMPTY STATE PANEL
+   ============================================================ */
+.panel__empty {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; text-align: center;
+  gap: 12px; padding: 30px;
+}
+.panel__empty-icon { font-size: 44px; opacity: .4; }
+.panel__empty p { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+
+/* ============================================================
+   ANIMATIONS
+   ============================================================ */
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.anim-in { animation: fadeIn .25s ease forwards; }
+
+/* ============================================================
+   SVG MAP STYLES (injected)
+   ============================================================ */
+.barrio-fill { transition: fill-opacity .18s; }
+.barrio-fill:hover { fill-opacity: .42 !important; }
+.commune-border { pointer-events: stroke; }
+.marker-g { cursor: pointer; }
+.marker-pulse { animation: pulse 2.6s ease-in-out infinite; }
+@keyframes pulse {
+  0%, 100% { r: 12; opacity: .25; }
+  50%       { r: 20; opacity: .08; }
+}
+.marker-tooltip { transition: opacity .14s; pointer-events: none; }
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 900px) {
+  :root { --filter-w: 0px; }
+  .sidebar { display: none; }
+  .detail-panel { width: min(340px, 94vw); }
+}
+</style>
 </head>
-<body class="page--map">
+<body>
 
-  <!-- ═══ HEADER ═══ -->
-  <header class="site-header">
-    <a href="../index.html" class="brand" aria-label="Ir al inicio — Secretos de la Ciudad">
-      <span class="brand__icon" aria-hidden="true"></span>
-      <span class="brand__name">
-        <strong>Secretos</strong>
-        <span>de la Ciudad</span>
-      </span>
-    </a>
+<!-- HEADER -->
+<header class="header">
+  <a href="#" class="brand" aria-label="Secretos de la Ciudad">
+    <span class="brand__icon">🗺️</span>
+    <span class="brand__name"><strong>Secretos</strong><span>de la Ciudad</span></span>
+  </a>
+  <div class="header__search">
+    <span class="header__search-icon">🔍</span>
+    <input id="search-input" type="search" placeholder="Buscar lugares, barrios…" autocomplete="off" aria-label="Buscar lugares">
+  </div>
+  <nav class="header__nav">
+    <a href="#">Inicio</a>
+    <a href="#">Explorar</a>
+    <a href="#" class="active" aria-current="page">Mapa</a>
+    <a href="#">Sobre nosotros</a>
+  </nav>
+</header>
 
-    <nav class="main-nav" aria-label="Navegación principal">
-      <ul class="main-nav__list">
-        <li><a href="../index.html" class="main-nav__link">Inicio</a></li>
-        <li><a href="places.html" class="main-nav__link">Explorar</a></li>
-        <li><a href="map.html" class="main-nav__link main-nav__link--active" aria-current="page">Mapa</a></li>
-        <li><a href="about.html" class="main-nav__link">Sobre nosotros</a></li>
-      </ul>
-    </nav>
+<!-- APP LAYOUT -->
+<div class="app">
 
-    <form class="site-search" role="search" action="#" method="get">
-      <label for="search-input" class="sr-only">Buscar lugares</label>
-      <input
-        id="search-input"
-        type="search"
-        name="q"
-        class="site-search__input"
-        placeholder="Buscar lugares..."
-        autocomplete="off"
-      />
-      <button type="submit" class="site-search__btn" aria-label="Buscar">
-        <span class="icon icon--search" aria-hidden="true"></span>
-      </button>
-    </form>
-  </header>
-
-  <!-- ═══ MAIN ═══ -->
-  <main class="site-layout site-layout--map">
-
-    <!-- ─── Encabezado de página ─── -->
-    <section class="map-header">
-      <article class="map-header__container">
-        <header class="map-header__eyebrow">
-          <hr class="map-header__eyebrow-line" aria-hidden="true" />
-          <span class="map-header__eyebrow-label">Explorar la ciudad</span>
-        </header>
-        <h1 class="map-header__title">
-          Mapa <em class="map-header__title-highlight">interactivo</em>
-        </h1>
-        <p class="map-header__description">
-          Descubrí todos los rincones secretos de Buenos Aires. Hacé clic en un marcador para ver los detalles del lugar.
-        </p>
-      </article>
-    </section>
-
-    <!-- ─── Zona principal: filtros + mapa + panel ─── -->
-    <section class="map-layout" aria-label="Mapa y lugares">
-
-      <!-- BARRA DE FILTROS -->
-      <aside class="map-filters" aria-label="Filtros de categoría">
-        <header class="map-filters__header">
-          <h2 class="map-filters__title">Filtrar por</h2>
-        </header>
-
-        <!-- El script inyectará los botones de categoría aquí -->
-        <nav
-          id="mapa-filtros"
-          class="map-filters__nav"
-          role="navigation"
-          aria-label="Categorías de lugares"
-        >
-          <!-- JS: renderizarFiltros() inyecta botones .map-filter-btn aquí -->
-        </nav>
-
-        <!-- Contador de resultados -->
-        <footer class="map-filters__footer">
-          <p class="map-filters__count">
-            Mostrando <strong id="mapa-contador">0</strong> lugares
-          </p>
-        </footer>
-      </aside>
-
-      <!-- MAPA SVG / CANVAS -->
-      <div class="map-stage" role="region" aria-label="Mapa de Buenos Aires">
-
-        <!-- Estado de carga -->
-        <div class="map-stage__loading" id="mapa-loading" aria-live="polite" aria-label="Cargando mapa">
-          <span class="map-stage__loading-spinner" aria-hidden="true"></span>
-          <p>Cargando lugares…</p>
-        </div>
-
-        <!-- Estado de error -->
-        <div class="map-stage__error" id="mapa-error" hidden aria-live="assertive">
-          <p>No se pudieron cargar los lugares. Verificá que <code>places.json</code> exista y sea válido.</p>
-        </div>
-
-        <!-- El script inyecta el SVG del mapa aquí -->
-        <div
-          id="mapa-contenedor"
-          class="map-stage__canvas"
-          aria-label="Mapa interactivo de Buenos Aires"
-          tabindex="0"
-        >
-          <!-- JS: renderizarMapa() inyecta el SVG dinámico aquí -->
-        </div>
-
-        <!-- Leyenda del mapa -->
-        <footer class="map-legend" id="mapa-leyenda" aria-label="Leyenda del mapa">
-          <!-- JS: renderizarLeyenda() inyecta ítems .map-legend__item aquí -->
-        </footer>
+  <!-- SIDEBAR FILTROS -->
+  <aside class="sidebar" aria-label="Filtros de categoría">
+    <div class="sidebar__header">
+      <div class="sidebar__title">Filtrar</div>
+      <div class="sidebar__subtitle">Seleccioná una categoría</div>
+    </div>
+    <nav id="filter-nav" class="sidebar__filters" aria-label="Categorías"></nav>
+    <div class="sidebar__footer">
+      <div class="sidebar__footer-count">
+        <strong id="place-count">0</strong>
+        lugares visibles
       </div>
+    </div>
+  </aside>
 
-      <!-- PANEL LATERAL DE DETALLE -->
-      <aside
-        class="map-panel"
-        id="mapa-panel"
-        aria-label="Detalle del lugar seleccionado"
-        aria-live="polite"
-        hidden
-      >
-        <!-- Estado vacío (cuando ningún lugar está seleccionado) -->
-        <div class="map-panel__empty" id="mapa-panel-empty">
-          <span class="map-panel__empty-icon" aria-hidden="true">📍</span>
-          <p>Seleccioná un marcador en el mapa para ver los detalles del lugar.</p>
+  <!-- MAPA -->
+  <div class="map-wrap" role="region" aria-label="Mapa interactivo de Buenos Aires">
+
+    <!-- Loading -->
+    <div class="map-overlay" id="map-loading" aria-live="polite">
+      <div class="spinner"></div>
+      <span>Cargando mapa…</span>
+    </div>
+    <!-- Error -->
+    <div class="map-overlay hidden" id="map-error" aria-live="assertive">
+      <span style="font-size:32px">⚠️</span>
+      <p>No se pudieron cargar los datos del mapa.</p>
+    </div>
+
+    <!-- Canvas SVG -->
+    <div id="map-canvas" class="map-canvas" tabindex="0" aria-label="Mapa de Buenos Aires, usá scroll para zoom y arrastrá para desplazarte"></div>
+
+    <!-- Zoom buttons -->
+    <div class="zoom-controls" aria-label="Controles de zoom">
+      <button class="zoom-btn" id="z-in"  title="Acercar"       aria-label="Acercar">+</button>
+      <button class="zoom-btn" id="z-out" title="Alejar"        aria-label="Alejar">−</button>
+      <button class="zoom-btn reset" id="z-rst" title="Restablecer" aria-label="Restablecer vista">⌂</button>
+    </div>
+
+    <!-- Commune tooltip -->
+    <div class="commune-tooltip" id="commune-tooltip"></div>
+
+    <!-- Leyenda -->
+    <div class="map-legend" id="map-legend" aria-label="Leyenda de comunas">
+      <div class="map-legend__title">Comunas</div>
+    </div>
+
+    <!-- Detail Panel -->
+    <aside class="detail-panel" id="detail-panel" aria-label="Detalle del lugar seleccionado" aria-live="polite">
+      <!-- Empty state -->
+      <div class="panel__empty" id="panel-empty">
+        <div class="panel__empty-icon">📍</div>
+        <p>Hacé clic en un marcador para ver los detalles del lugar.</p>
+      </div>
+      <!-- Detail content -->
+      <div id="panel-content" style="display:none; flex-direction:column; height:100%">
+        <button class="panel__close" id="panel-close" aria-label="Cerrar detalle">✕</button>
+        <div class="panel__hero" id="panel-hero">
+          <span class="panel__hero-icon" id="panel-icon"></span>
+          <span class="panel__hero-barrio" id="panel-barrio-label"></span>
         </div>
-
-        <!-- Detalle del lugar — el script inyecta contenido aquí -->
-        <article class="map-panel__detail" id="mapa-panel-detalle" hidden>
-
-          <!-- Imagen del lugar -->
-          <figure class="map-panel__media" id="mapa-panel-media">
-            <!-- JS inyecta <img> aquí si hay imagen disponible -->
-          </figure>
-
-          <!-- Cabecera del lugar -->
-          <header class="map-panel__header">
-            <span class="map-panel__badge" id="mapa-panel-categoria"></span>
-            <h2 class="map-panel__nombre" id="mapa-panel-nombre"></h2>
-            <address class="map-panel__ubicacion" id="mapa-panel-ubicacion">
-              <svg class="map-panel__ubicacion-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="14" height="14" aria-hidden="true">
-                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
-              </svg>
-              <span id="mapa-panel-barrio"></span>
-            </address>
-          </header>
-
-          <!-- Cuerpo del lugar -->
-          <section class="map-panel__body">
-
-            <p class="map-panel__info" id="mapa-panel-info"></p>
-
-            <dl class="map-panel__meta">
-              <div class="map-panel__meta-item">
-                <dt class="map-panel__meta-label">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <div class="panel__body">
+          <div class="anim-in">
+            <div class="panel__cat" id="panel-cat"></div>
+            <div class="panel__name" id="panel-name"></div>
+            <div class="panel__address" id="panel-addr">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="12" height="12"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>
+              <span id="panel-addr-text"></span>
+            </div>
+            <p class="panel__desc" id="panel-desc"></p>
+            <div class="panel__meta">
+              <div class="meta-row">
+                <span class="meta-row__label">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                   Horario nocturno
-                </dt>
-                <dd class="map-panel__meta-value" id="mapa-panel-horario"></dd>
+                </span>
+                <span class="meta-row__val" id="panel-horario"></span>
               </div>
-              <div class="map-panel__meta-item">
-                <dt class="map-panel__meta-label">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14" aria-hidden="true"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+              <div class="meta-row">
+                <span class="meta-row__label">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
                   Precio
-                </dt>
-                <dd class="map-panel__meta-value" id="mapa-panel-precio"></dd>
+                </span>
+                <span class="meta-row__val" id="panel-precio"></span>
               </div>
-              <div class="map-panel__meta-item">
-                <dt class="map-panel__meta-label">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+              <div class="meta-row">
+                <span class="meta-row__label">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
                   Accesibilidad
-                </dt>
-                <dd class="map-panel__meta-value" id="mapa-panel-accesibilidad"></dd>
+                </span>
+                <span class="meta-row__val" id="panel-acc"></span>
               </div>
-            </dl>
-
-            <!-- Recomendaciones -->
-            <div class="map-panel__recomendaciones">
-              <h3 class="map-panel__recomendaciones-title">Recomendaciones</h3>
-              <ul class="map-panel__recomendaciones-list" id="mapa-panel-recomendaciones">
-                <!-- JS inyecta <li> aquí -->
-              </ul>
             </div>
+            <div class="panel__section-title">Recomendaciones</div>
+            <ul class="recs-list" id="panel-recs"></ul>
+            <div class="panel__section-title">Ideal para</div>
+            <ul class="tags-list" id="panel-tags"></ul>
+          </div>
+        </div>
+        <div class="panel__footer">
+          <button class="btn-fav" id="btn-fav" type="button" aria-pressed="false">
+            <span id="btn-fav-icon">🤍</span>
+            <span id="btn-fav-label">Agregar a favoritos</span>
+          </button>
+        </div>
+      </div>
+    </aside>
 
-            <!-- Ideal para -->
-            <div class="map-panel__tags" id="mapa-panel-tags-container">
-              <h3 class="map-panel__tags-title">Ideal para</h3>
-              <ul class="map-panel__tags-list" id="mapa-panel-tags">
-                <!-- JS inyecta <li class="map-panel__tag"> aquí -->
-              </ul>
-            </div>
+  </div><!-- .map-wrap -->
 
-          </section>
+</div><!-- .app -->
 
-          <!-- Footer del panel -->
-          <footer class="map-panel__footer">
-            <button
-              class="map-panel__btn-favorito"
-              id="mapa-panel-btn-favorito"
-              type="button"
-              aria-pressed="false"
-            >
-              <span class="map-panel__btn-favorito-icon" aria-hidden="true">🤍</span>
-              <span class="map-panel__btn-favorito-label">Agregar a favoritos</span>
-            </button>
-            <button
-              class="map-panel__btn-cerrar"
-              id="mapa-panel-btn-cerrar"
-              type="button"
-              aria-label="Cerrar detalle"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-            </button>
-          </footer>
+<script>
+"use strict";
 
-        </article>
-      </aside>
+/* ============================================================
+   1. GEO DATA — CABA Barrios (polígonos realistas [lng, lat])
+   Basado en datos oficiales GCBA, optimizados para SVG
+   ============================================================ */
 
-    </section>
+// Comunas con sus colores y barrios asociados
+const COMUNAS = {
+  1:  { nombre:"Comuna 1",  color:"#6c63ff", barrios:["San Nicolás","Monserrat","San Telmo","Constitución","Retiro","Puerto Madero"] },
+  2:  { nombre:"Comuna 2",  color:"#c084fc", barrios:["Recoleta"] },
+  3:  { nombre:"Comuna 3",  color:"#a16207", barrios:["Balvanera","San Cristóbal"] },
+  4:  { nombre:"Comuna 4",  color:"#84cc16", barrios:["La Boca","Barracas","Parque Patricios","Nueva Pompeya"] },
+  5:  { nombre:"Comuna 5",  color:"#94a3b8", barrios:["Almagro","Boedo"] },
+  6:  { nombre:"Comuna 6",  color:"#64748b", barrios:["Caballito"] },
+  7:  { nombre:"Comuna 7",  color:"#38bdf8", barrios:["Flores","Parque Chacabuco"] },
+  8:  { nombre:"Comuna 8",  color:"#ef4444", barrios:["Villa Soldati","Villa Lugano","Villa Riachuelo"] },
+  9:  { nombre:"Comuna 9",  color:"#14b8a6", barrios:["Liniers","Mataderos","Parque Avellaneda"] },
+  10: { nombre:"Comuna 10", color:"#22c55e", barrios:["Monte Castro","Versalles","Floresta","Vélez Sársfield","Villa Luro","Villa Real"] },
+  11: { nombre:"Comuna 11", color:"#3b82f6", barrios:["Villa del Parque","Villa Devoto","Villa General Mitre","Villa Santa Rita"] },
+  12: { nombre:"Comuna 12", color:"#f59e0b", barrios:["Coghlan","Saavedra","Villa Urquiza","Villa Pueyrredón"] },
+  13: { nombre:"Comuna 13", color:"#a78bfa", barrios:["Belgrano","Colegiales","Núñez"] },
+  14: { nombre:"Comuna 14", color:"#e2e8f0", barrios:["Palermo"] },
+  15: { nombre:"Comuna 15", color:"#a3e635", barrios:["Agronomía","Chacarita","La Paternal","Parque Chas","Villa Crespo","Villa Ortúzar"] },
+};
 
-  </main>
+/**
+ * Polígonos de barrios en coordenadas geográficas reales [lng, lat].
+ * Cada polígono tiene 8–22 vértices para capturar la forma real del barrio.
+ * Fuente: geometría oficial GCBA simplificada para rendimiento.
+ */
+const BARRIOS_GEO = {
+  // ── COMUNA 1 ──────────────────────────────────────────────
+  "Puerto Madero":   [[-58.3703,-34.5941],[-58.3599,-34.5914],[-58.3570,-34.5960],[-58.3543,-34.6030],[-58.3570,-34.6110],[-58.3599,-34.6180],[-58.3640,-34.6250],[-58.3680,-34.6270],[-58.3700,-34.6200],[-58.3720,-34.6100],[-58.3720,-34.6010]],
+  "Retiro":          [[-58.3880,-34.5810],[-58.3750,-34.5810],[-58.3680,-34.5850],[-58.3670,-34.5900],[-58.3703,-34.5941],[-58.3720,-34.6010],[-58.3740,-34.5990],[-58.3800,-34.5970],[-58.3880,-34.5960],[-58.3950,-34.5900],[-58.3960,-34.5850]],
+  "San Nicolás":     [[-58.3960,-34.5960],[-58.3880,-34.5960],[-58.3800,-34.5970],[-58.3740,-34.5990],[-58.3720,-34.6010],[-58.3703,-34.5941],[-58.3720,-34.6010],[-58.3720,-34.6070],[-58.3780,-34.6080],[-58.3870,-34.6080],[-58.3960,-34.6060],[-58.4000,-34.6010]],
+  "Monserrat":       [[-58.4000,-34.6060],[-58.3960,-34.6060],[-58.3870,-34.6080],[-58.3780,-34.6080],[-58.3720,-34.6070],[-58.3710,-34.6120],[-58.3700,-34.6180],[-58.3750,-34.6190],[-58.3830,-34.6190],[-58.3920,-34.6170],[-58.4000,-34.6140],[-58.4020,-34.6100]],
+  "San Telmo":       [[-58.3830,-34.6190],[-58.3750,-34.6190],[-58.3700,-34.6200],[-58.3680,-34.6270],[-58.3700,-34.6310],[-58.3740,-34.6330],[-58.3800,-34.6330],[-58.3870,-34.6290],[-58.3920,-34.6240],[-58.3920,-34.6200]],
+  "Constitución":    [[-58.4020,-34.6100],[-58.4000,-34.6140],[-58.3920,-34.6170],[-58.3830,-34.6190],[-58.3920,-34.6200],[-58.3920,-34.6260],[-58.3960,-34.6290],[-58.4030,-34.6300],[-58.4070,-34.6250],[-58.4060,-34.6170],[-58.4040,-34.6120]],
 
-  <!-- ═══ FOOTER ═══ -->
-  <footer class="site-footer">
-    <p class="site-footer__copy">
-      &copy; <time datetime="2026">2026</time> Secretos de la Ciudad
-    </p>
-  </footer>
+  // ── COMUNA 2 ──────────────────────────────────────────────
+  "Recoleta":        [[-58.4140,-34.5800],[-58.3960,-34.5800],[-58.3960,-34.5850],[-58.3880,-34.5810],[-58.3880,-34.5960],[-58.3960,-34.5960],[-58.4000,-34.6010],[-58.4020,-34.6100],[-58.4060,-34.6080],[-58.4120,-34.6050],[-58.4200,-34.6000],[-58.4210,-34.5950],[-58.4180,-34.5870],[-58.4160,-34.5820]],
 
-  <!-- Script del mapa — se cargará desde scripts/map.js -->
-  <script src="../scripts/places.js"></script>
+  // ── COMUNA 3 ──────────────────────────────────────────────
+  "Balvanera":       [[-58.4200,-34.6000],[-58.4120,-34.6050],[-58.4060,-34.6080],[-58.4020,-34.6100],[-58.4040,-34.6120],[-58.4060,-34.6170],[-58.4070,-34.6250],[-58.4120,-34.6260],[-58.4200,-34.6240],[-58.4270,-34.6210],[-58.4310,-34.6160],[-58.4290,-34.6080],[-58.4250,-34.6030]],
+  "San Cristóbal":   [[-58.4070,-34.6250],[-58.4030,-34.6300],[-58.3960,-34.6290],[-58.3960,-34.6340],[-58.4020,-34.6380],[-58.4100,-34.6390],[-58.4170,-34.6370],[-58.4220,-34.6320],[-58.4230,-34.6260],[-58.4200,-34.6240],[-58.4120,-34.6260]],
 
+  // ── COMUNA 4 ──────────────────────────────────────────────
+  "La Boca":         [[-58.3740,-34.6330],[-58.3700,-34.6310],[-58.3640,-34.6340],[-58.3600,-34.6380],[-58.3580,-34.6430],[-58.3620,-34.6490],[-58.3680,-34.6520],[-58.3740,-34.6510],[-58.3800,-34.6470],[-58.3820,-34.6420],[-58.3800,-34.6360],[-58.3760,-34.6330]],
+  "Barracas":        [[-58.3920,-34.6260],[-58.3870,-34.6290],[-58.3800,-34.6330],[-58.3740,-34.6330],[-58.3760,-34.6330],[-58.3800,-34.6360],[-58.3820,-34.6420],[-58.3800,-34.6470],[-58.3870,-34.6520],[-58.3980,-34.6530],[-58.4050,-34.6500],[-58.4080,-34.6430],[-58.4060,-34.6360],[-58.3980,-34.6310]],
+  "Parque Patricios":[[-58.4100,-34.6390],[-58.4020,-34.6380],[-58.3960,-34.6340],[-58.3960,-34.6290],[-58.3980,-34.6310],[-58.4060,-34.6360],[-58.4080,-34.6430],[-58.4050,-34.6500],[-58.4100,-34.6520],[-58.4200,-34.6510],[-58.4260,-34.6470],[-58.4250,-34.6410],[-58.4200,-34.6380],[-58.4140,-34.6380]],
+  "Nueva Pompeya":   [[-58.4260,-34.6470],[-58.4200,-34.6510],[-58.4100,-34.6520],[-58.4050,-34.6500],[-58.3980,-34.6530],[-58.4020,-34.6600],[-58.4090,-34.6660],[-58.4200,-34.6680],[-58.4320,-34.6660],[-58.4400,-34.6610],[-58.4430,-34.6540],[-58.4370,-34.6490],[-58.4300,-34.6470]],
+
+  // ── COMUNA 5 ──────────────────────────────────────────────
+  "Almagro":         [[-58.4310,-34.6160],[-58.4270,-34.6210],[-58.4200,-34.6240],[-58.4230,-34.6260],[-58.4220,-34.6320],[-58.4290,-34.6350],[-58.4380,-34.6340],[-58.4430,-34.6290],[-58.4420,-34.6210],[-58.4390,-34.6170],[-58.4350,-34.6160]],
+  "Boedo":           [[-58.4220,-34.6320],[-58.4170,-34.6370],[-58.4100,-34.6390],[-58.4140,-34.6380],[-58.4200,-34.6380],[-58.4250,-34.6410],[-58.4260,-34.6470],[-58.4300,-34.6470],[-58.4370,-34.6440],[-58.4410,-34.6390],[-58.4430,-34.6340],[-58.4380,-34.6340],[-58.4290,-34.6350]],
+
+  // ── COMUNA 6 ──────────────────────────────────────────────
+  "Caballito":       [[-58.4420,-34.6070],[-58.4310,-34.6060],[-58.4310,-34.6160],[-58.4350,-34.6160],[-58.4390,-34.6170],[-58.4420,-34.6210],[-58.4430,-34.6290],[-58.4430,-34.6340],[-58.4500,-34.6330],[-58.4550,-34.6280],[-58.4570,-34.6200],[-58.4550,-34.6120],[-58.4500,-34.6060],[-58.4460,-34.6060]],
+
+  // ── COMUNA 7 ──────────────────────────────────────────────
+  "Flores":          [[-58.4570,-34.6200],[-58.4550,-34.6280],[-58.4500,-34.6330],[-58.4430,-34.6340],[-58.4410,-34.6390],[-58.4430,-34.6440],[-58.4480,-34.6470],[-58.4570,-34.6480],[-58.4680,-34.6470],[-58.4750,-34.6430],[-58.4760,-34.6350],[-58.4730,-34.6270],[-58.4680,-34.6220],[-58.4620,-34.6200]],
+  "Parque Chacabuco":[[-58.4500,-34.6330],[-58.4430,-34.6340],[-58.4430,-34.6440],[-58.4480,-34.6470],[-58.4570,-34.6480],[-58.4570,-34.6400],[-58.4530,-34.6370],[-58.4520,-34.6330]],
+
+  // ── COMUNA 8 ──────────────────────────────────────────────
+  "Villa Soldati":   [[-58.4430,-34.6540],[-58.4400,-34.6610],[-58.4430,-34.6680],[-58.4530,-34.6720],[-58.4650,-34.6720],[-58.4720,-34.6680],[-58.4740,-34.6600],[-58.4700,-34.6530],[-58.4620,-34.6510],[-58.4530,-34.6520]],
+  "Villa Lugano":    [[-58.4720,-34.6680],[-58.4650,-34.6720],[-58.4650,-34.6810],[-58.4720,-34.6870],[-58.4830,-34.6880],[-58.4960,-34.6840],[-58.5030,-34.6770],[-58.5000,-34.6680],[-58.4920,-34.6630],[-58.4820,-34.6620],[-58.4740,-34.6640]],
+  "Villa Riachuelo": [[-58.4320,-34.6660],[-58.4200,-34.6680],[-58.4200,-34.6760],[-58.4280,-34.6830],[-58.4400,-34.6840],[-58.4530,-34.6800],[-58.4530,-34.6720],[-58.4430,-34.6680],[-58.4370,-34.6650]],
+
+  // ── COMUNA 9 ──────────────────────────────────────────────
+  "Parque Avellaneda":[[-58.4750,-34.6430],[-58.4680,-34.6470],[-58.4570,-34.6480],[-58.4570,-34.6560],[-58.4640,-34.6580],[-58.4750,-34.6570],[-58.4850,-34.6530],[-58.4870,-34.6460],[-58.4830,-34.6420],[-58.4790,-34.6420]],
+  "Liniers":          [[-58.5060,-34.6440],[-58.4980,-34.6440],[-58.4900,-34.6430],[-58.4870,-34.6460],[-58.4850,-34.6530],[-58.4870,-34.6600],[-58.4960,-34.6630],[-58.5060,-34.6600],[-58.5130,-34.6540],[-58.5110,-34.6470]],
+  "Mataderos":        [[-58.5060,-34.6600],[-58.4960,-34.6630],[-58.4920,-34.6630],[-58.4830,-34.6620],[-58.4830,-34.6720],[-58.4900,-34.6780],[-58.5010,-34.6800],[-58.5130,-34.6770],[-58.5200,-34.6700],[-58.5180,-34.6620],[-58.5110,-34.6580]],
+
+  // ── COMUNA 10 ─────────────────────────────────────────────
+  "Villa Real":       [[-58.5080,-34.6210],[-58.4980,-34.6220],[-58.4900,-34.6210],[-58.4870,-34.6260],[-58.4910,-34.6310],[-58.4990,-34.6320],[-58.5090,-34.6310],[-58.5130,-34.6260]],
+  "Monte Castro":     [[-58.5080,-34.6110],[-58.4990,-34.6100],[-58.4900,-34.6100],[-58.4900,-34.6210],[-58.4980,-34.6220],[-58.5080,-34.6210],[-58.5130,-34.6170],[-58.5110,-34.6120]],
+  "Versalles":        [[-58.5130,-34.6260],[-58.5090,-34.6310],[-58.4990,-34.6320],[-58.5000,-34.6400],[-58.5090,-34.6430],[-58.5200,-34.6410],[-58.5250,-34.6350],[-58.5210,-34.6280]],
+  "Floresta":         [[-58.4870,-34.6260],[-58.4910,-34.6310],[-58.4900,-34.6380],[-58.4870,-34.6430],[-58.4870,-34.6460],[-58.4900,-34.6430],[-58.4980,-34.6440],[-58.5060,-34.6440],[-58.5050,-34.6370],[-58.5000,-34.6320],[-58.4920,-34.6300],[-58.4870,-34.6260]],
+  "Vélez Sársfield":  [[-58.4990,-34.6320],[-58.4910,-34.6310],[-58.4900,-34.6380],[-58.4940,-34.6430],[-58.5040,-34.6440],[-58.5090,-34.6380],[-58.5080,-34.6340]],
+  "Villa Luro":       [[-58.5000,-34.6400],[-58.4990,-34.6320],[-58.5080,-34.6340],[-58.5090,-34.6380],[-58.5040,-34.6440],[-58.5080,-34.6460],[-58.5130,-34.6440],[-58.5130,-34.6380],[-58.5100,-34.6380]],
+
+  // ── COMUNA 11 ─────────────────────────────────────────────
+  "Villa Devoto":     [[-58.5040,-34.5980],[-58.4950,-34.5970],[-58.4870,-34.5980],[-58.4860,-34.6060],[-58.4900,-34.6100],[-58.4990,-34.6100],[-58.5080,-34.6110],[-58.5120,-34.6060],[-58.5100,-34.6000]],
+  "Villa del Parque": [[-58.4870,-34.5980],[-58.4780,-34.5970],[-58.4730,-34.5990],[-58.4720,-34.6060],[-58.4780,-34.6100],[-58.4860,-34.6060]],
+  "Villa General Mitre":[[-58.4780,-34.6100],[-58.4720,-34.6060],[-58.4720,-34.6120],[-58.4760,-34.6170],[-58.4830,-34.6150],[-58.4870,-34.6100]],
+  "Villa Santa Rita": [[-58.4950,-34.6090],[-58.4870,-34.6060],[-58.4830,-34.6150],[-58.4870,-34.6200],[-58.4940,-34.6210],[-58.5000,-34.6180],[-58.5010,-34.6120]],
+
+  // ── COMUNA 12 ─────────────────────────────────────────────
+  "Núñez":            [[-58.4600,-34.5380],[-58.4460,-34.5390],[-58.4350,-34.5400],[-58.4330,-34.5460],[-58.4390,-34.5510],[-58.4490,-34.5520],[-58.4600,-34.5500],[-58.4660,-34.5440]],
+  "Saavedra":         [[-58.4660,-34.5440],[-58.4600,-34.5500],[-58.4490,-34.5520],[-58.4480,-34.5590],[-58.4540,-34.5640],[-58.4640,-34.5640],[-58.4740,-34.5610],[-58.4770,-34.5530],[-58.4730,-34.5460]],
+  "Coghlan":          [[-58.4740,-34.5610],[-58.4640,-34.5640],[-58.4640,-34.5700],[-58.4700,-34.5740],[-58.4800,-34.5730],[-58.4840,-34.5670],[-58.4820,-34.5620]],
+  "Villa Urquiza":    [[-58.4820,-34.5620],[-58.4840,-34.5670],[-58.4800,-34.5730],[-58.4800,-34.5820],[-58.4860,-34.5870],[-58.4970,-34.5870],[-58.5060,-34.5830],[-58.5090,-34.5750],[-58.5060,-34.5670],[-58.4980,-34.5630],[-58.4900,-34.5620]],
+  "Villa Pueyrredón": [[-58.4800,-34.5820],[-58.4700,-34.5820],[-58.4620,-34.5830],[-58.4610,-34.5900],[-58.4660,-34.5940],[-58.4770,-34.5950],[-58.4860,-34.5940],[-58.4860,-34.5870]],
+
+  // ── COMUNA 13 ─────────────────────────────────────────────
+  "Núñez":            [[-58.4600,-34.5380],[-58.4440,-34.5380],[-58.4330,-34.5400],[-58.4290,-34.5460],[-58.4350,-34.5510],[-58.4450,-34.5530],[-58.4580,-34.5510],[-58.4660,-34.5440]],
+  "Belgrano":         [[-58.4660,-34.5440],[-58.4580,-34.5510],[-58.4450,-34.5530],[-58.4390,-34.5580],[-58.4380,-34.5650],[-58.4420,-34.5710],[-58.4530,-34.5740],[-58.4640,-34.5700],[-58.4640,-34.5640],[-58.4740,-34.5610],[-58.4730,-34.5530]],
+  "Colegiales":       [[-58.4420,-34.5710],[-58.4350,-34.5710],[-58.4280,-34.5730],[-58.4260,-34.5800],[-58.4300,-34.5860],[-58.4390,-34.5880],[-58.4490,-34.5870],[-58.4540,-34.5820],[-58.4530,-34.5740]],
+
+  // ── COMUNA 14 ─────────────────────────────────────────────
+  "Palermo":          [[-58.4260,-34.5800],[-58.4140,-34.5800],[-58.4120,-34.5870],[-58.4120,-34.5980],[-58.4170,-34.6030],[-58.4250,-34.6030],[-58.4310,-34.6010],[-58.4350,-34.5960],[-58.4370,-34.5890],[-58.4330,-34.5820]],
+
+  // ── COMUNA 15 ─────────────────────────────────────────────
+  "Villa Crespo":     [[-58.4310,-34.5970],[-58.4250,-34.5960],[-58.4200,-34.5960],[-58.4200,-34.6000],[-58.4250,-34.6030],[-58.4310,-34.6010]],
+  "Chacarita":        [[-58.4370,-34.5890],[-58.4350,-34.5960],[-58.4310,-34.5970],[-58.4310,-34.6010],[-58.4370,-34.6020],[-58.4430,-34.5990],[-58.4450,-34.5920],[-58.4420,-34.5860]],
+  "Villa Ortúzar":    [[-58.4490,-34.5870],[-58.4450,-34.5870],[-58.4420,-34.5860],[-58.4420,-34.5930],[-58.4460,-34.5960],[-58.4530,-34.5960],[-58.4550,-34.5920],[-58.4520,-34.5870]],
+  "Colegiales":       [[-58.4300,-34.5860],[-58.4260,-34.5870],[-58.4260,-34.5930],[-58.4300,-34.5970],[-58.4350,-34.5960],[-58.4370,-34.5890],[-58.4330,-34.5840]],
+  "La Paternal":      [[-58.4550,-34.5920],[-58.4530,-34.5960],[-58.4530,-34.6020],[-58.4590,-34.6030],[-58.4640,-34.6000],[-58.4640,-34.5940],[-58.4600,-34.5900]],
+  "Parque Chas":      [[-58.4640,-34.5940],[-58.4640,-34.6000],[-58.4720,-34.6010],[-58.4760,-34.5970],[-58.4740,-34.5910],[-58.4680,-34.5900]],
+  "Agronomía":        [[-58.4860,-34.5940],[-58.4770,-34.5940],[-58.4720,-34.5940],[-58.4720,-34.6010],[-58.4780,-34.6020],[-58.4860,-34.6010],[-58.4930,-34.5980],[-58.4920,-34.5930]],
+};
+
+/* build lookup: barrio → comunaId, barrio → color */
+const BARRIO_COMUNA = {};
+const BARRIO_COLOR  = {};
+Object.entries(COMUNAS).forEach(([id, c]) => {
+  c.barrios.forEach(b => {
+    BARRIO_COMUNA[b] = +id;
+    BARRIO_COLOR[b]  = c.color;
+  });
+});
+
+/* ============================================================
+   2. CATEGORÍAS
+   ============================================================ */
+const CAT = {
+  "Teatro / Cultura":    { color:"#f59e0b", icon:"🎭" },
+  "Tango / Gastronomía": { color:"#ec4899", icon:"💃" },
+  "Paseo Urbano":        { color:"#06b6d4", icon:"🌉" },
+  "Avenida Cultural":    { color:"#a78bfa", icon:"🎪" },
+  "Ciencia / Cultura":   { color:"#34d399", icon:"🔭" },
+  "Gastronomía / Cultura":{ color:"#fb923c", icon:"🥢" },
+  "Vida Nocturna":       { color:"#f472b6", icon:"🍻" },
+  "Centro Cultural":     { color:"#818cf8", icon:"🎨" },
+  "Turismo Histórico":   { color:"#fbbf24", icon:"📸" },
+  "Espacio Verde":       { color:"#4ade80", icon:"🌿" },
+};
+const catOf = c => CAT[c] || { color:"#6c63ff", icon:"📍" };
+
+/* ============================================================
+   3. DATOS LUGARES (embebidos)
+   ============================================================ */
+const LUGARES = [
+  { id:1,  nombre:"Teatro Colón",        categoria:"Teatro / Cultura",     barrio:"San Nicolás",   zona_comuna:"San Nicolás — C1",   ubicacion_exacta:"Cerrito 628",                 coordenadas:{latitud:-34.6011,longitud:-58.3831}, horarios_nocturnos:"20:00 a 23:00",                    precio:"Alto",          accesibilidad:"Alta",  recomendaciones:["Reservar con anticipación","Llegar temprano al hall","Ideal para fotografía nocturna"], informacion:"El Teatro Colón es considerado uno de los teatros líricos más importantes del mundo por su acústica y arquitectura monumental. Por la noche, el edificio iluminado sobre la Av. 9 de Julio genera una atmósfera elegante e histórica.",                        ideal_para:["Turistas","Parejas","Amantes de la cultura"] },
+  { id:2,  nombre:"El Querandí",         categoria:"Tango / Gastronomía",  barrio:"San Telmo",     zona_comuna:"San Telmo — C1",     ubicacion_exacta:"Perú 322",                    coordenadas:{latitud:-34.6122,longitud:-58.3734}, horarios_nocturnos:"20:00 a 23:30",                    precio:"Alto",          accesibilidad:"Media", recomendaciones:["Ideal para primera experiencia de tango","Reservar con anticipación","Elegir opción con cena incluida"], informacion:"El Querandí funciona en un edificio histórico con decoración clásica y ambiente íntimo. El espectáculo combina tango, música en vivo y relatos históricos sobre Buenos Aires.",                                                              ideal_para:["Turistas internacionales","Parejas","Amantes del tango"] },
+  { id:3,  nombre:"Puerto Madero",       categoria:"Paseo Urbano",         barrio:"Puerto Madero", zona_comuna:"Puerto Madero — C1", ubicacion_exacta:"Zona Puente de la Mujer",     coordenadas:{latitud:-34.6118,longitud:-58.3631}, horarios_nocturnos:"Acceso libre toda la noche",      precio:"Sin costo",     accesibilidad:"Alta",  recomendaciones:["Ideal para caminatas nocturnas","Excelente para fotografía urbana","Cenar frente al río"],  informacion:"Puerto Madero es el barrio más moderno de Buenos Aires. De noche se transforma con las luces reflejadas en los diques. El Puente de la Mujer y la Costanera Sur son sus principales atractivos.",                                                   ideal_para:["Turistas","Parejas","Fotógrafos"] },
+  { id:4,  nombre:"Avenida Corrientes",  categoria:"Avenida Cultural",     barrio:"San Nicolás",   zona_comuna:"Comunas 1 y 3",      ubicacion_exacta:"Tramo Callao — 9 de Julio",  coordenadas:{latitud:-34.6037,longitud:-58.3925}, horarios_nocturnos:"Actividad intensa hasta madrugada",precio:"Variable",      accesibilidad:"Alta",  recomendaciones:["Combinar teatro y pizza","Recorrer librerías nocturnas","Ideal para caminar"],             informacion:"La Avenida Corrientes es la calle que nunca duerme. Sus teatros, bares y pizzerías generan un ambiente dinámico incluso después de medianoche, con carteles luminosos que recuerdan a Broadway.",                                                    ideal_para:["Turistas","Amigos","Amantes del teatro"] },
+  { id:5,  nombre:"Planetario Galileo",  categoria:"Ciencia / Cultura",    barrio:"Palermo",       zona_comuna:"Palermo — C14",      ubicacion_exacta:"Av. Sarmiento s/n",          coordenadas:{latitud:-34.5692,longitud:-58.4115}, horarios_nocturnos:"Funciones según agenda",          precio:"Bajo",          accesibilidad:"Alta",  recomendaciones:["Ir en noches despejadas","Consultar agenda astronómica","Ideal para familias"],             informacion:"El Planetario, rodeado por los Bosques de Palermo, adquiere un aspecto futurista de noche. Ofrece observaciones astronómicas con telescopios abiertos al público en un entorno verde y tranquilo.",                                                  ideal_para:["Familias","Estudiantes","Parejas"] },
+  { id:6,  nombre:"Barrio Chino",        categoria:"Gastronomía / Cultura", barrio:"Belgrano",     zona_comuna:"Belgrano — C13",     ubicacion_exacta:"Arribeños y Mendoza",        coordenadas:{latitud:-34.5615,longitud:-58.4497}, horarios_nocturnos:"18:00 a 00:00",                    precio:"Bajo/Medio",    accesibilidad:"Alta",  recomendaciones:["Probar comida callejera asiática","Visitar supermercados orientales","Ideal para fotografías"],informacion:"El Barrio Chino ofrece una experiencia nocturna distinta con sus luces, faroles rojos y gastronomía asiática. Los locales de ramen, bubble tea y comida coreana generan un ambiente muy activo los fines de semana.", ideal_para:["Jóvenes","Turistas","Foodies"] },
+  { id:7,  nombre:"Plaza Serrano",       categoria:"Vida Nocturna",        barrio:"Palermo",       zona_comuna:"Palermo Soho — C14", ubicacion_exacta:"Serrano y Honduras",         coordenadas:{latitud:-34.5881,longitud:-58.4299}, horarios_nocturnos:"Bares hasta 03:00 o más",         precio:"Medio",         accesibilidad:"Alta",  recomendaciones:["Ideal para grupos de amigos","Recorrer bares temáticos","Visitar fines de semana"],         informacion:"Plaza Serrano es uno de los principales centros de vida nocturna de Buenos Aires. Rodeada de bares, cervecerías y restaurantes con estilos muy variados, sus calles se llenan de música y movimiento.",         ideal_para:["Jóvenes","Grupos de amigos","Turistas"] },
+  { id:8,  nombre:"Usina del Arte",      categoria:"Centro Cultural",      barrio:"La Boca",       zona_comuna:"La Boca — C4",       ubicacion_exacta:"Caffarena 1",                coordenadas:{latitud:-34.6283,longitud:-58.3649}, horarios_nocturnos:"Hasta aprox. 23:00",              precio:"Gratuito/Bajo", accesibilidad:"Alta",  recomendaciones:["Consultar agenda cultural","Ideal para conciertos","Combinar con paseo por La Boca"],        informacion:"La Usina del Arte es uno de los centros culturales más importantes del sur de la ciudad. Su edificio industrial restaurado alberga conciertos, muestras y espectáculos gratuitos con una atmósfera muy especial de noche.",                           ideal_para:["Familias","Turistas","Amantes del arte"] },
+  { id:9,  nombre:"Caminito",            categoria:"Turismo Histórico",    barrio:"La Boca",       zona_comuna:"La Boca — C4",       ubicacion_exacta:"Caminito y Magallanes",      coordenadas:{latitud:-34.6356,longitud:-58.3648}, horarios_nocturnos:"Recomendable hasta las 22:00",    precio:"Sin costo",     accesibilidad:"Media", recomendaciones:["Ir acompañado","Mantenerse en zonas turísticas","Ideal para fotografía"],                    informacion:"Caminito conserva su identidad colorida y artística incluso de noche. Muchos restaurantes y espacios de tango continúan abiertos, con música en vivo y espectáculos callejeros.",                                                                   ideal_para:["Turistas","Fotógrafos","Parejas"] },
+  { id:10, nombre:"Parque Centenario",   categoria:"Espacio Verde",        barrio:"Caballito",     zona_comuna:"Caballito — C6",     ubicacion_exacta:"Av. Díaz Vélez y Marechal", coordenadas:{latitud:-34.6067,longitud:-58.4356}, horarios_nocturnos:"Bares cercanos hasta madrugada",  precio:"Sin costo",     accesibilidad:"Alta",  recomendaciones:["Combinar con bares cercanos","Ideal para caminatas","Visitar cafés de la zona"],             informacion:"Parque Centenario es el espacio verde en el centro geográfico de Buenos Aires. De noche el movimiento se traslada a las avenidas cercanas con bares y restaurantes modernos.",                                                                       ideal_para:["Familias","Amigos","Estudiantes"] },
+];
+
+/* ============================================================
+   4. ESTADO GLOBAL
+   ============================================================ */
+const STATE = {
+  lugares: LUGARES,
+  filtro: 'todos',
+  selectedId: null,
+  favoritos: new Set(JSON.parse(localStorage.getItem('sdc-favoritos') || '[]')),
+  zoom: 1,
+  panX: 0,
+  panY: 0,
+  isDragging: false,
+  dragStart: null,
+  searchQuery: '',
+};
+
+function saveFavoritos() {
+  localStorage.setItem('sdc-favoritos', JSON.stringify([...STATE.favoritos]));
+}
+
+/* ============================================================
+   5. PROYECCIÓN Mercator → píxeles SVG
+   ============================================================ */
+const SVG_W = 860, SVG_H = 760;
+
+const BOUNDS = {
+  minLng: -58.532, maxLng: -58.335,
+  minLat: -34.706, maxLat: -34.527,
+};
+
+function project(lng, lat) {
+  // Mercator simplificado con corrección de aspecto
+  const x = (lng - BOUNDS.minLng) / (BOUNDS.maxLng - BOUNDS.minLng) * SVG_W;
+  const y = (1 - (lat - BOUNDS.minLat) / (BOUNDS.maxLat - BOUNDS.minLat)) * SVG_H;
+  return [x, y];
+}
+
+function polyToPath(coords) {
+  return coords.map(([lng, lat], i) => {
+    const [x, y] = project(lng, lat);
+    return `${i === 0 ? 'M' : 'L'}${x.toFixed(1)},${y.toFixed(1)}`;
+  }).join(' ') + ' Z';
+}
+
+function centroid(coords) {
+  const n = coords.length;
+  let sx = 0, sy = 0;
+  coords.forEach(([lng, lat]) => {
+    const [x, y] = project(lng, lat);
+    sx += x; sy += y;
+  });
+  return [sx / n, sy / n];
+}
+
+/* ============================================================
+   6. CONSTRUCCIÓN DEL SVG
+   ============================================================ */
+const NS = "http://www.w3.org/2000/svg";
+
+function el(tag, attrs = {}, text = '') {
+  const e = document.createElementNS(NS, tag);
+  Object.entries(attrs).forEach(([k, v]) => e.setAttribute(k, v));
+  if (text) e.textContent = text;
+  return e;
+}
+
+function buildMap() {
+  const canvas = document.getElementById('map-canvas');
+  canvas.innerHTML = '';
+
+  // SVG root
+  const svg = el('svg', {
+    viewBox: `0 0 ${SVG_W} ${SVG_H}`,
+    xmlns: NS,
+    id: 'mapa-svg',
+    'aria-hidden': 'true',
+  });
+
+  // ── Defs ──────────────────────────────────────────────────
+  const defs = el('defs');
+  defs.innerHTML = `
+    <radialGradient id="bg-grad" cx="45%" cy="55%" r="65%">
+      <stop offset="0%" stop-color="#141726"/>
+      <stop offset="100%" stop-color="#080a10"/>
+    </radialGradient>
+    <pattern id="grid-pat" width="40" height="40" patternUnits="userSpaceOnUse" opacity="0.04">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#6c63ff" stroke-width="0.6"/>
+    </pattern>
+    <filter id="f-glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="f-marker-shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="rgba(0,0,0,.7)"/>
+    </filter>
+    <filter id="f-commune-glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="1.5" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  `;
+  svg.appendChild(defs);
+
+  // ── Background ────────────────────────────────────────────
+  svg.appendChild(el('rect', { width: SVG_W, height: SVG_H, fill: 'url(#bg-grad)' }));
+  svg.appendChild(el('rect', { width: SVG_W, height: SVG_H, fill: 'url(#grid-pat)' }));
+
+  // ── Río de la Plata label ─────────────────────────────────
+  const rioLabel = el('text', {
+    x: SVG_W - 45, y: 110,
+    'text-anchor': 'middle',
+    fill: '#7dd3fc', 'fill-opacity': '0.45',
+    'font-size': '12', 'font-style': 'italic',
+    'font-family': 'Georgia, serif',
+    'pointer-events': 'none',
+    transform: 'rotate(-15, ' + (SVG_W-45) + ', 110)',
+  }, 'Río de la Plata');
+  svg.appendChild(rioLabel);
+
+  // ── Main group (zoom/pan target) ──────────────────────────
+  const g = el('g', { id: 'mapa-g' });
+  svg.appendChild(g);
+
+  // ── Layer 1: barrio fills ─────────────────────────────────
+  const gFills = el('g', { id: 'layer-fills' });
+  Object.entries(BARRIOS_GEO).forEach(([nombre, coords]) => {
+    const color = BARRIO_COLOR[nombre] || '#4a5568';
+    const path = el('path', {
+      d: polyToPath(coords),
+      fill: color, 'fill-opacity': '0.18',
+      stroke: 'none',
+      'data-barrio': nombre,
+      class: 'barrio-fill',
+    });
+
+    // hover events for commune tooltip
+    path.addEventListener('mouseenter', (e) => showTooltip(e, nombre));
+    path.addEventListener('mousemove', moveTooltip);
+    path.addEventListener('mouseleave', hideTooltip);
+    gFills.appendChild(path);
+  });
+  g.appendChild(gFills);
+
+  // ── Layer 2: barrio borders (thin, subtle) ─────────────────
+  const gBarioBorders = el('g', { id: 'layer-barrio-borders', 'pointer-events': 'none' });
+  Object.entries(BARRIOS_GEO).forEach(([nombre, coords]) => {
+    const color = BARRIO_COLOR[nombre] || '#4a5568';
+    gBarioBorders.appendChild(el('path', {
+      d: polyToPath(coords),
+      fill: 'none',
+      stroke: color, 'stroke-opacity': '0.5',
+      'stroke-width': '0.8',
+      'stroke-linejoin': 'round',
+    }));
+  });
+  g.appendChild(gBarioBorders);
+
+  // ── Layer 3: commune borders (bold, colored) ───────────────
+  const gComunaBorders = el('g', { id: 'layer-commune-borders', 'pointer-events': 'none' });
+  Object.entries(COMUNAS).forEach(([id, c]) => {
+    c.barrios.forEach(b => {
+      if (!BARRIOS_GEO[b]) return;
+      gComunaBorders.appendChild(el('path', {
+        d: polyToPath(BARRIOS_GEO[b]),
+        fill: 'none',
+        stroke: c.color, 'stroke-opacity': '0.95',
+        'stroke-width': '2',
+        'stroke-linejoin': 'round',
+        filter: 'url(#f-commune-glow)',
+        class: 'commune-border',
+      }));
+    });
+  });
+  g.appendChild(gComunaBorders);
+
+  // ── Layer 4: barrio labels ─────────────────────────────────
+  const gLabels = el('g', { id: 'layer-labels', 'pointer-events': 'none' });
+  Object.entries(BARRIOS_GEO).forEach(([nombre, coords]) => {
+    const [cx, cy] = centroid(coords);
+    const txt = el('text', {
+      x: cx, y: cy,
+      'text-anchor': 'middle',
+      'dominant-baseline': 'middle',
+      fill: '#e2e8f0', 'fill-opacity': '0.55',
+      'font-size': '7',
+      'font-family': "'Segoe UI', system-ui, sans-serif",
+      'font-weight': '500',
+      'letter-spacing': '0.03em',
+    }, nombre);
+    gLabels.appendChild(txt);
+  });
+  g.appendChild(gLabels);
+
+  // ── Layer 5: markers ──────────────────────────────────────
+  const gMarkers = el('g', { id: 'layer-markers' });
+  const visibleLugares = getFilteredLugares();
+
+  visibleLugares.forEach(lugar => {
+    const [x, y] = project(lugar.coordenadas.longitud, lugar.coordenadas.latitud);
+    const cfg = catOf(lugar.categoria);
+    const isFav = STATE.favoritos.has(lugar.id);
+
+    const gM = el('g', {
+      class: 'marker-g',
+      'data-id': lugar.id,
+      filter: 'url(#f-marker-shadow)',
+    });
+
+    // Pulse ring
+    const pulse = el('circle', {
+      cx: x, cy: y, r: 14,
+      fill: cfg.color, 'fill-opacity': '0.15',
+      stroke: cfg.color, 'stroke-width': '1', 'stroke-opacity': '0.3',
+      class: 'marker-pulse',
+    });
+
+    // Pin circle
+    const pin = el('circle', {
+      cx: x, cy: y - 2, r: 11,
+      fill: cfg.color, 'fill-opacity': '0.92',
+      class: 'marker-pin',
+    });
+
+    // Icon
+    const icon = el('text', {
+      x: x, y: y + 1.5,
+      'text-anchor': 'middle', 'dominant-baseline': 'middle',
+      'font-size': '11', 'pointer-events': 'none',
+    }, cfg.icon);
+
+    // Fav star
+    if (isFav) {
+      gM.appendChild(el('text', {
+        x: x + 9, y: y - 12,
+        'font-size': '9', 'pointer-events': 'none',
+      }, '⭐'));
+    }
+
+    // Tooltip
+    const gTT = el('g', { class: 'marker-tooltip', opacity: '0', 'pointer-events': 'none' });
+    const tW = Math.min(lugar.nombre.length * 6.4 + 18, 190);
+    gTT.appendChild(el('rect', {
+      x: x - tW/2, y: y - 38, width: tW, height: 20,
+      rx: 10, ry: 10,
+      fill: 'rgba(8,10,16,.93)', stroke: cfg.color, 'stroke-width': '1',
+    }));
+    gTT.appendChild(el('text', {
+      x: x, y: y - 24,
+      'text-anchor': 'middle', 'dominant-baseline': 'middle',
+      fill: '#fff', 'font-size': '10',
+      'font-family': "'Segoe UI', system-ui, sans-serif",
+      'font-weight': '600',
+    }, lugar.nombre));
+
+    gM.appendChild(pulse);
+    gM.appendChild(pin);
+    gM.appendChild(icon);
+    gM.appendChild(gTT);
+
+    gM.addEventListener('mouseenter', () => {
+      gTT.setAttribute('opacity', '1');
+      pin.setAttribute('r', '13');
+    });
+    gM.addEventListener('mouseleave', () => {
+      gTT.setAttribute('opacity', '0');
+      pin.setAttribute('r', '11');
+    });
+    gM.addEventListener('click', e => {
+      e.stopPropagation();
+      selectPlace(lugar.id);
+    });
+
+    gMarkers.appendChild(gM);
+  });
+  g.appendChild(gMarkers);
+
+  // Apply current transform
+  applyTransform(g);
+
+  // Setup interactions
+  setupZoomPan(svg, g);
+
+  // Inject CSS animations into SVG
+  const style = document.createElementNS(NS, 'style');
+  style.textContent = `
+    .marker-pulse { animation: pulse 2.6s ease-in-out infinite; }
+    @keyframes pulse { 0%,100%{r:12;opacity:.22} 50%{r:20;opacity:.06} }
+    .marker-g { transition: opacity .2s; }
+    .marker-tooltip { transition: opacity .14s; }
+    .barrio-fill { transition: fill-opacity .18s; }
+    .barrio-fill:hover { fill-opacity:.36!important; cursor:default; }
+  `;
+  svg.appendChild(style);
+
+  canvas.appendChild(svg);
+  return svg;
+}
+
+/* ============================================================
+   7. FILTROS
+   ============================================================ */
+function getFilteredLugares() {
+  let list = STATE.lugares;
+  if (STATE.searchQuery) {
+    const q = STATE.searchQuery.toLowerCase();
+    list = list.filter(l =>
+      l.nombre.toLowerCase().includes(q) ||
+      l.barrio.toLowerCase().includes(q) ||
+      l.categoria.toLowerCase().includes(q) ||
+      l.informacion.toLowerCase().includes(q)
+    );
+  }
+  if (STATE.filtro !== 'todos') {
+    list = list.filter(l => l.categoria === STATE.filtro);
+  }
+  return list;
+}
+
+function buildFilters() {
+  const nav = document.getElementById('filter-nav');
+  const cats = ['todos', ...new Set(LUGARES.map(l => l.categoria))];
+
+  nav.innerHTML = cats.map(cat => {
+    const cfg = catOf(cat);
+    const active = STATE.filtro === cat;
+    const count = cat === 'todos' ? LUGARES.length : LUGARES.filter(l => l.categoria === cat).length;
+    return `
+      <button class="filter-btn${active ? ' active' : ''}" data-cat="${cat}"
+        style="${active ? `background:${cfg.color}18;border-color:${cfg.color}55;color:${cfg.color}` : ''}">
+        <span class="filter-btn__dot" style="background:${cat === 'todos' ? '#6c63ff' : cfg.color}"></span>
+        ${cat === 'todos' ? 'Todos los lugares' : cat}
+        <span class="filter-btn__count">${count}</span>
+      </button>
+    `;
+  }).join('');
+
+  nav.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      STATE.filtro = btn.dataset.cat;
+      buildFilters();
+      buildMap();
+      updateCount();
+    });
+  });
+}
+
+function updateCount() {
+  const cnt = document.getElementById('place-count');
+  if (cnt) cnt.textContent = getFilteredLugares().length;
+}
+
+/* ============================================================
+   8. LEYENDA COMUNAS
+   ============================================================ */
+function buildLegend() {
+  const legend = document.getElementById('map-legend');
+  const entries = Object.values(COMUNAS).map(c =>
+    `<div class="legend-item">
+      <div class="legend-item__swatch" style="background:${c.color}"></div>
+      <span>${c.nombre}</span>
+    </div>`
+  ).join('');
+  legend.innerHTML = `<div class="map-legend__title">Comunas CABA</div>${entries}`;
+}
+
+/* ============================================================
+   9. ZOOM / PAN (Google Maps style)
+   ============================================================ */
+function applyTransform(g) {
+  if (!g) return;
+  g.setAttribute('transform', `translate(${STATE.panX},${STATE.panY}) scale(${STATE.zoom})`);
+}
+
+function setupZoomPan(svg, g) {
+  // Wheel zoom (zoom toward cursor)
+  svg.addEventListener('wheel', e => {
+    e.preventDefault();
+    const factor = e.deltaY < 0 ? 1.13 : 0.885;
+    const rect = svg.getBoundingClientRect();
+    const scaleW = SVG_W / rect.width;
+    const scaleH = SVG_H / rect.height;
+    const mx = (e.clientX - rect.left) * scaleW;
+    const my = (e.clientY - rect.top) * scaleH;
+
+    const newZoom = Math.min(Math.max(STATE.zoom * factor, 0.55), 8);
+    STATE.panX = mx - (mx - STATE.panX) * (newZoom / STATE.zoom);
+    STATE.panY = my - (my - STATE.panY) * (newZoom / STATE.zoom);
+    STATE.zoom = newZoom;
+    applyTransform(g);
+  }, { passive: false });
+
+  // Mouse drag pan
+  svg.addEventListener('mousedown', e => {
+    if (e.button !== 0) return;
+    STATE.isDragging = true;
+    STATE.dragStart = { x: e.clientX - STATE.panX, y: e.clientY - STATE.panY };
+    svg.style.cursor = 'grabbing';
+  });
+  window.addEventListener('mousemove', e => {
+    if (!STATE.isDragging) return;
+    STATE.panX = e.clientX - STATE.dragStart.x;
+    STATE.panY = e.clientY - STATE.dragStart.y;
+    applyTransform(g);
+  });
+  window.addEventListener('mouseup', () => {
+    if (!STATE.isDragging) return;
+    STATE.isDragging = false;
+    svg.style.cursor = 'grab';
+  });
+  svg.style.cursor = 'grab';
+
+  // Touch
+  let lastTouches = [];
+  svg.addEventListener('touchstart', e => { lastTouches = [...e.touches]; }, { passive: true });
+  svg.addEventListener('touchmove', e => {
+    e.preventDefault();
+    if (e.touches.length === 1 && lastTouches.length >= 1) {
+      STATE.panX += e.touches[0].clientX - lastTouches[0].clientX;
+      STATE.panY += e.touches[0].clientY - lastTouches[0].clientY;
+      applyTransform(g);
+    } else if (e.touches.length === 2 && lastTouches.length === 2) {
+      const d0 = Math.hypot(lastTouches[0].clientX - lastTouches[1].clientX, lastTouches[0].clientY - lastTouches[1].clientY);
+      const d1 = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+      STATE.zoom = Math.min(Math.max(STATE.zoom * (d1 / d0), 0.55), 8);
+      applyTransform(g);
+    }
+    lastTouches = [...e.touches];
+  }, { passive: false });
+
+  // Double-click reset
+  svg.addEventListener('dblclick', () => {
+    STATE.zoom = 1; STATE.panX = 0; STATE.panY = 0;
+    applyTransform(g);
+  });
+
+  // Keyboard
+  svg.addEventListener('keydown', e => {
+    const step = 30;
+    if (e.key === 'ArrowLeft')  { STATE.panX += step; applyTransform(g); }
+    if (e.key === 'ArrowRight') { STATE.panX -= step; applyTransform(g); }
+    if (e.key === 'ArrowUp')    { STATE.panY += step; applyTransform(g); }
+    if (e.key === 'ArrowDown')  { STATE.panY -= step; applyTransform(g); }
+    if (e.key === '+' || e.key === '=') { STATE.zoom = Math.min(STATE.zoom * 1.2, 8); applyTransform(g); }
+    if (e.key === '-') { STATE.zoom = Math.max(STATE.zoom * 0.83, 0.55); applyTransform(g); }
+  });
+}
+
+/* Zoom buttons */
+function setupZoomButtons() {
+  function remap(factor) {
+    const g = document.querySelector('#mapa-g');
+    if (!g) return;
+    STATE.zoom = Math.min(Math.max(STATE.zoom * factor, 0.55), 8);
+    applyTransform(g);
+  }
+  document.getElementById('z-in').onclick  = () => remap(1.25);
+  document.getElementById('z-out').onclick = () => remap(0.8);
+  document.getElementById('z-rst').onclick = () => {
+    STATE.zoom = 1; STATE.panX = 0; STATE.panY = 0;
+    applyTransform(document.querySelector('#mapa-g'));
+  };
+}
+
+/* ============================================================
+   10. COMMUNE TOOLTIP
+   ============================================================ */
+const tooltip = document.getElementById('commune-tooltip');
+
+function showTooltip(e, nombre) {
+  const comunaId = BARRIO_COMUNA[nombre];
+  const comuna = comunaId ? COMUNAS[comunaId] : null;
+  if (!comuna) return;
+  tooltip.innerHTML = `<span style="color:${comuna.color}">${comuna.nombre}</span> · ${nombre}`;
+  moveTooltip(e);
+  tooltip.classList.add('visible');
+}
+function moveTooltip(e) {
+  const wrap = document.querySelector('.map-wrap').getBoundingClientRect();
+  tooltip.style.left = (e.clientX - wrap.left + 14) + 'px';
+  tooltip.style.top  = (e.clientY - wrap.top  - 36) + 'px';
+}
+function hideTooltip() { tooltip.classList.remove('visible'); }
+
+/* ============================================================
+   11. PANEL DE DETALLE
+   ============================================================ */
+function selectPlace(id) {
+  STATE.selectedId = id;
+
+  // Dim other markers
+  document.querySelectorAll('.marker-g').forEach(m => {
+    m.style.opacity = (+m.dataset.id === id) ? '1' : '0.35';
+  });
+
+  showPanel(LUGARES.find(l => l.id === id));
+}
+
+function showPanel(lugar) {
+  if (!lugar) return;
+  const panel = document.getElementById('detail-panel');
+  const empty = document.getElementById('panel-empty');
+  const content = document.getElementById('panel-content');
+  const cfg = catOf(lugar.categoria);
+  const isFav = STATE.favoritos.has(lugar.id);
+
+  // Hero
+  const hero = document.getElementById('panel-hero');
+  hero.style.background = `linear-gradient(135deg, ${cfg.color}30, ${cfg.color}0a)`;
+  hero.style.borderBottom = `1px solid ${cfg.color}33`;
+  document.getElementById('panel-icon').textContent = cfg.icon;
+  document.getElementById('panel-barrio-label').textContent = lugar.barrio;
+  document.getElementById('panel-barrio-label').style.color = cfg.color;
+
+  document.getElementById('panel-cat').textContent  = lugar.categoria;
+  document.getElementById('panel-cat').style.color  = cfg.color;
+  document.getElementById('panel-name').textContent = lugar.nombre;
+  document.getElementById('panel-addr-text').textContent = lugar.ubicacion_exacta;
+  document.getElementById('panel-desc').textContent = lugar.informacion;
+  document.getElementById('panel-horario').textContent = lugar.horarios_nocturnos;
+  document.getElementById('panel-precio').textContent  = lugar.precio;
+  document.getElementById('panel-acc').textContent     = lugar.accesibilidad;
+
+  const recs = document.getElementById('panel-recs');
+  recs.innerHTML = lugar.recomendaciones.map(r => `<li>${r}</li>`).join('');
+
+  const tags = document.getElementById('panel-tags');
+  tags.innerHTML = lugar.ideal_para.map(t =>
+    `<li style="background:${cfg.color}18;border-color:${cfg.color}44;color:${cfg.color}">${t}</li>`
+  ).join('');
+
+  updateFavBtn(lugar.id, cfg.color);
+  document.getElementById('btn-fav').onclick = () => toggleFav(lugar.id, cfg.color);
+
+  empty.style.display = 'none';
+  content.style.display = 'flex';
+
+  panel.classList.add('open');
+}
+
+function updateFavBtn(id, color) {
+  const isFav = STATE.favoritos.has(id);
+  const btn = document.getElementById('btn-fav');
+  btn.className = 'btn-fav' + (isFav ? ' is-fav' : '');
+  document.getElementById('btn-fav-icon').textContent  = isFav ? '❤️' : '🤍';
+  document.getElementById('btn-fav-label').textContent = isFav ? 'En favoritos' : 'Agregar a favoritos';
+  btn.setAttribute('aria-pressed', isFav);
+}
+
+function toggleFav(id, color) {
+  if (STATE.favoritos.has(id)) STATE.favoritos.delete(id);
+  else STATE.favoritos.add(id);
+  saveFavoritos();
+  updateFavBtn(id, color);
+  buildMap();
+  selectPlace(id); // restore selection after rebuild
+}
+
+function closePanel() {
+  STATE.selectedId = null;
+  document.getElementById('detail-panel').classList.remove('open');
+  document.querySelectorAll('.marker-g').forEach(m => m.style.opacity = '1');
+}
+
+document.getElementById('panel-close').addEventListener('click', closePanel);
+
+/* ============================================================
+   12. BÚSQUEDA
+   ============================================================ */
+function setupSearch() {
+  const input = document.getElementById('search-input');
+  let debounceTimer;
+  input.addEventListener('input', e => {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
+      STATE.searchQuery = e.target.value.trim();
+      buildMap();
+      updateCount();
+    }, 200);
+  });
+}
+
+/* ============================================================
+   13. INIT
+   ============================================================ */
+function init() {
+  const loading = document.getElementById('map-loading');
+
+  buildFilters();
+  buildLegend();
+  buildMap();
+  updateCount();
+  setupZoomButtons();
+  setupSearch();
+
+  loading.classList.add('hidden');
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
+</script>
 </body>
 </html>

@@ -268,3 +268,11 @@ Aunque el mercado es famoso de día, durante la noche muchos locales gastronómi
 
 **Resumen:**
 El Konex es uno de los espacios culturales más modernos y alternativos de Buenos Aires. Sus eventos nocturnos incluyen conciertos, fiestas electrónicas, espectáculos experimentales y actividades artísticas muy variadas. El ambiente suele ser joven, urbano y muy dinámico. La famosa “Bomba de Tiempo” transformó al lugar en uno de los íconos culturales nocturnos de la ciudad.
+
+
+
+
+pront hmtl, map :
+
+pront 1; 
+crea un map.html, la arquitectura del código debe ser completo y pero escalable, agregando correcta la semantica. map.html estará pensado para agregar un mapa dinámico y artificial, utilizando únicamente CSS, JS Y JSON local puro. ahora dame el HTML base, agrega los botones de inicio, explorar, sobre nosostros y mapa (te paso la referencia de codigo) después te daré indicaciones para el JS.
