@@ -1,9 +1,10 @@
 .places-page {
   min-height: 100vh;
-  padding: calc(var(--header-h) + 3rem) var(--space-6) var(--space-20);
+  padding: calc(var(--header-h) + 4rem) var(--space-6) var(--space-20);
   background:
-    radial-gradient(circle at top right, rgba(124, 58, 237, 0.14), transparent 32%),
-    linear-gradient(180deg, #050508 0%, var(--color-bg) 100%);
+    radial-gradient(circle at 78% 8%, rgba(124, 58, 237, 0.24), transparent 36%),
+    radial-gradient(circle at 12% 18%, rgba(90, 42, 138, 0.14), transparent 30%),
+    linear-gradient(180deg, #050508 0%, #09070f 48%, var(--color-bg) 100%);
 }
 
 .places-explorer {
@@ -12,14 +13,22 @@
 }
 
 .places-explorer__header {
-  margin-bottom: var(--space-8);
+  max-width: 720px;
+  margin-bottom: var(--space-10);
 }
 
 .places-explorer__title {
-  font-family: var(--font-display);
-  font-size: clamp(2.2rem, 5vw, 4rem);
-  line-height: 1;
+  font-family: "Cormorant Garamond", serif;
+  font-size: clamp(2.45rem, 4.5vw, 3.8rem);
+  font-weight: 700;
+  line-height: 1.15;
   color: var(--color-text);
+  max-width: 540px;
+}
+
+.places-explorer__title-highlight {
+  font-style: italic;
+  color: var(--color-purple);
 }
 
 .places-explorer__subtitle {
@@ -27,6 +36,7 @@
   max-width: 560px;
   color: var(--color-text-muted);
   font-size: var(--text-lg);
+  line-height: 1.7;
 }
 
 .places-explorer__filters {
