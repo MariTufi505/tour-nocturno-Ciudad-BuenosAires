@@ -73,7 +73,7 @@ function renderizarCards(lugares, contenedor) {
         card.classList.add('card');
         
         // Aplicamos estilos base y flexbox para igualar alturas
-        Object.assign(card.style, {
+        /*Object.assign(card.style, {
             border: "1px solid #ccc",
             borderRadius: "8px",
             padding: "15px",
@@ -81,15 +81,21 @@ function renderizarCards(lugares, contenedor) {
             position: "relative",
             display: "flex",
             flexDirection: "column"
-        });
+        });*/
 
         const esFavorito = favoritos.includes(lugar.id);
+
+        const esHome = contenedor.id === 'contenedor-cards-index';
+        const descripcionCorta = esHome
+            ? `${lugar.informacion.substring(0, 100)}...`
+            : `${lugar.informacion.substring(0, 200)}...`;
 
         // Generamos los items de recomendaciones para la lista (si existen)
         const listaRecomendaciones = lugar.recomendaciones && lugar.recomendaciones.length > 0 
             ? lugar.recomendaciones.map(rec => `<li>${rec}</li>`).join('') 
             : '<li>Sin recomendaciones específicas</li>';
 
+        
         // Inyectamos el HTML. Usamos flex-grow: 1 para empujar el botón hacia abajo.
        card.innerHTML = `
         <div class="card__inner">
@@ -115,7 +121,7 @@ function renderizarCards(lugares, contenedor) {
             </address>
 
             <p class="card__description descripcion-corta">
-                ${lugar.informacion.substring(0, 100)}...
+                ${descripcionCorta}
             </p>
 
             <div class="info-extendida" style="display: none;">

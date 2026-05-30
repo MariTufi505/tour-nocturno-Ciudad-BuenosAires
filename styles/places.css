@@ -1,0 +1,115 @@
+.places-page {
+  min-height: 100vh;
+  padding: calc(var(--header-h) + 3rem) var(--space-6) var(--space-20);
+  background:
+    radial-gradient(circle at top right, rgba(124, 58, 237, 0.14), transparent 32%),
+    linear-gradient(180deg, #050508 0%, var(--color-bg) 100%);
+}
+
+.places-explorer {
+  width: min(100%, 1120px);
+  margin: 0 auto;
+}
+
+.places-explorer__header {
+  margin-bottom: var(--space-8);
+}
+
+.places-explorer__title {
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 5vw, 4rem);
+  line-height: 1;
+  color: var(--color-text);
+}
+
+.places-explorer__subtitle {
+  margin-top: var(--space-4);
+  max-width: 560px;
+  color: var(--color-text-muted);
+  font-size: var(--text-lg);
+}
+
+.places-explorer__filters {
+  margin-bottom: var(--space-6);
+}
+
+.filter-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.filter-list__link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 0 var(--space-5);
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  transition: 
+    color var(--transition-base),
+    background var(--transition-base),
+    border-color var(--transition-base),
+    transform var(--transition-base);
+}
+
+.filter-list__link:hover,
+.filter-list__link--active {
+  color: var(--color-text);
+  background: var(--color-purple-soft);
+  border-color: rgba(124, 58, 237, 0.45);
+  transform: translateY(-2px);
+}
+
+.filters-button {
+  display: none;
+}
+
+.places-explorer__count {
+  margin-bottom: var(--space-5);
+  color: var(--color-text-faint);
+  font-size: var(--text-sm);
+}
+
+.place-list {
+  width: min(100%, 920px);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.places-page .card__inner {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  min-height: 220px;
+}
+
+.places-page .card__media {
+  aspect-ratio: auto;
+  height: 100%;
+}
+
+.places-page .card__title {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.places-page .card__body {
+  padding: 2rem 2.5rem;
+  justify-content: center;
+}
+
+.places-page .card__description {
+  display: block;
+  overflow: visible;
+}
+
+.places-page .card__footer {
+  margin-top: 0.75rem;
+  padding-top: 1.6rem;
+}
