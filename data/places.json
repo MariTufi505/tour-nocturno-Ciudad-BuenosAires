@@ -311,7 +311,7 @@
       "Mantenerse en zonas turísticas",
       "Ideal para fotografía"
     ],
-    "informacion": "Caminito conserva su identidad colorida y artística incluso durante la noche. Muchos restaurantes y espacios de tango continúan abiertos, ofreciendo música en vivo y espectáculos callejeros. Las luces sobre las fachadas pintadas generan una estética muy distinta al ambiente diurno. Conviene recorrerlo dentro de horarios concurridos y zonas transitadas.",
+    "informacion": "Caminito conserva su identidad colorida y artística incluso durante la noche. Muchos restaurantes y espacios de tango continuan abiertos, ofreciendo música en vivo y espectáculos callejeros. Las luces sobre las fachadas pintadas generan una estética muy distinta al ambiente diurno. Conviene recorrerlo dentro de horarios concurridos y zonas transitadas.",
     "imagenes_referencia": [
       "casas coloridas",
       "espectáculos de tango",
@@ -357,6 +357,321 @@
       "Familias",
       "Amigos",
       "Estudiantes"
+    ]
+  },
+  {
+    "id": 11,
+    "nombre": "La Biela y Plaza Francia",
+    "categoria": "Gastronomía / Histórica",
+    "zona_comuna": "Recoleta — Comuna 2",
+    "barrio": "Recoleta",
+    "ubicacion_exacta": "Av. Pres. Manuel Quintana 596",
+    "coordenadas": {
+      "latitud": -34.5873,
+      "longitud": -58.3908
+    },
+    "horarios_nocturnos": "Abierto hasta la madrugada",
+    "precio": "Medio/Alto",
+    "accesibilidad": "Alta",
+    "tipo_experiencia": [
+      "Cafetería",
+      "Histórica",
+      "Paseo"
+    ],
+    "recomendaciones": [
+      "Tomar un café en la terraza",
+      "Recorrer la plaza iluminada por la noche"
+    ],
+    "informacion": "Un clásico indiscutible de la noche porteña. La Biela es un Bar Notable que ofrece una experiencia tradicional con hermosas vistas a Plaza Francia. Es un punto de partida perfecto para un paseo nocturno elegante, rodeado de arquitectura de estilo francés y monumentos históricos.",
+    "imagenes_referencia": [
+      "terraza iluminada",
+      "café histórico",
+      "vista a la plaza"
+    ],
+    "ideal_para": [
+      "Turistas",
+      "Parejas",
+      "Amantes de la historia"
+    ]
+  },
+  {
+    "id": 12,
+    "nombre": "Esquina Homero Manzi",
+    "categoria": "Tango / Gastronomía",
+    "zona_comuna": "Boedo — Comuna 5",
+    "barrio": "Boedo",
+    "ubicacion_exacta": "Av. San Juan 3601",
+    "coordenadas": {
+      "latitud": -34.6226,
+      "longitud": -58.4162
+    },
+    "horarios_nocturnos": "Cenas y shows de 21:00 a 01:00",
+    "precio": "Alto",
+    "accesibilidad": "Media",
+    "tipo_experiencia": [
+      "Tango",
+      "Cena Show",
+      "Tradición"
+    ],
+    "recomendaciones": [
+      "Reservar con anticipación",
+      "Disfrutar del show en vivo"
+    ],
+    "informacion": "Esquina histórica declarada Sitio de Interés Cultural por la Ciudad. Representa a la perfección la esencia del tango y la vida bohemia de Boedo durante la noche, ofreciendo cenas con shows que capturan el espíritu nostálgico del barrio.",
+    "imagenes_referencia": [
+      "show de tango en vivo",
+      "esquina tradicional iluminada",
+      "salón histórico"
+    ],
+    "ideal_para": [
+      "Turistas",
+      "Parejas",
+      "Adultos mayores"
+    ]
+  },
+  {
+    "id": 13,
+    "nombre": "Barrio Coreano (Baekku)",
+    "categoria": "Gastronomía Exótica",
+    "zona_comuna": "Flores — Comuna 7",
+    "barrio": "Flores",
+    "ubicacion_exacta": "Pasaje Ruperto Godoy y Av. Carabobo",
+    "coordenadas": {
+      "latitud": -34.6366,
+      "longitud": -58.4552
+    },
+    "horarios_nocturnos": "Restaurantes abiertos hasta las 23:30",
+    "precio": "Medio",
+    "accesibilidad": "Media",
+    "tipo_experiencia": [
+      "Gastronomía",
+      "Cultural",
+      "Descubrimiento"
+    ],
+    "recomendaciones": [
+      "Probar la típica barbacoa coreana",
+      "Ir en grupo para compartir platos"
+    ],
+    "informacion": "Un polo gastronómico único y en constante crecimiento que cobra vida de noche con luces de neón y los aromas de auténticos restaurantes coreanos. Es un destino turístico emergente, excelente para quienes buscan sumergirse en la cultura asiática sin salir de Buenos Aires.",
+    "imagenes_referencia": [
+      "luces de neón",
+      "barbacoa coreana",
+      "fachadas con caracteres asiáticos"
+    ],
+    "ideal_para": [
+      "Foodies",
+      "Grupos de amigos",
+      "Jóvenes"
+    ]
+  },
+  {
+    "id": 14,
+    "nombre": "Torre Monumental del Parque de la Ciudad",
+    "categoria": "Mirador / Paseo Urbano",
+    "zona_comuna": "Villa Soldati — Comuna 8",
+    "barrio": "Villa Soldati",
+    "ubicacion_exacta": "Av. Fernández de la Cruz 4000",
+    "coordenadas": {
+      "latitud": -34.6706,
+      "longitud": -58.4556
+    },
+    "horarios_nocturnos": "Eventos especiales y festivales hasta las 23:00",
+    "precio": "Bajo",
+    "accesibilidad": "Media",
+    "tipo_experiencia": [
+      "Panorámica",
+      "Eventos",
+      "Fotografía"
+    ],
+    "recomendaciones": [
+      "Verificar la agenda de apertura nocturna",
+      "Ideal para llevar cámara fotográfica"
+    ],
+    "informacion": "La Torre Espacial, cuando se habilita en horario vespertino y nocturno durante eventos, ofrece la vista panorámica más alta de toda la ciudad. El predio se ilumina y se transforma en un escenario vibrante para festivales ocasionales y turismo alternativo.",
+    "imagenes_referencia": [
+      "torre iluminada",
+      "vista panorámica nocturna",
+      "eventos en el parque"
+    ],
+    "ideal_para": [
+      "Familias",
+      "Fotógrafos",
+      "Exploradores urbanos"
+    ]
+  },
+  {
+    "id": 15,
+    "nombre": "Pizzería El Cedrón",
+    "categoria": "Gastronomía Clásica",
+    "zona_comuna": "Mataderos — Comuna 9",
+    "barrio": "Mataderos",
+    "ubicacion_exacta": "Av. Juan Bautista Alberdi 6101",
+    "coordenadas": {
+      "latitud": -34.6534,
+      "longitud": -58.5042
+    },
+    "horarios_nocturnos": "Abierto hasta la 01:00 o más",
+    "precio": "Bajo/Medio",
+    "accesibilidad": "Alta",
+    "tipo_experiencia": [
+      "Comida local",
+      "Pizzería porteña",
+      "Ambiente de barrio"
+    ],
+    "recomendaciones": [
+      "Probar la pizza al molde y la fainá",
+      "Comer una porción de parado en el mostrador"
+    ],
+    "informacion": "Una verdadera institución de la vida nocturna en Mataderos. Mantiene vivo el espíritu rústico y auténtico del barrio porteño, siendo una parada obligatoria para los turistas que buscan probar la legendaria pizza de molde argentina en horario de madrugada.",
+    "imagenes_referencia": [
+      "fachada tradicional de noche",
+      "pizza al molde",
+      "salón concurrido"
+    ],
+    "ideal_para": [
+      "Familias",
+      "Grupos de amigos",
+      "Amantes de la pizza"
+    ]
+  },
+  {
+    "id": 16,
+    "nombre": "Polo Gastronómico Boulevard Falcón",
+    "categoria": "Bares / Gastronomía",
+    "zona_comuna": "Villa Luro — Comuna 10",
+    "barrio": "Villa Luro",
+    "ubicacion_exacta": "Bulevar Ramón Falcón al 5400",
+    "coordenadas": {
+      "latitud": -34.6361,
+      "longitud": -58.5133
+    },
+    "horarios_nocturnos": "Restaurantes y cervecerías hasta las 02:00",
+    "precio": "Medio",
+    "accesibilidad": "Alta",
+    "tipo_experiencia": [
+      "Cervecería",
+      "Paseo vecinal",
+      "Cena"
+    ],
+    "recomendaciones": [
+      "Pasear por el bulevar arbolado e iluminado",
+      "Visitar las cervecerías artesanales de la zona"
+    ],
+    "informacion": "Es un nuevo y atractivo foco nocturno en el oeste de la ciudad. El bulevar arbolado se transforma de noche con luces de guirnaldas y modernas cervecerías al aire libre, siendo el lugar ideal para vivir la noche urbana fuera del típico circuito céntrico.",
+    "imagenes_referencia": [
+      "bulevar con guirnaldas de luces",
+      "mesas al aire libre",
+      "cervecerías artesanales"
+    ],
+    "ideal_para": [
+      "Jóvenes",
+      "Parejas",
+      "Grupos de amigos"
+    ]
+  },
+  {
+    "id": 17,
+    "nombre": "Plaza Arenales y alrededores",
+    "categoria": "Polo Gastronómico / Paseo",
+    "zona_comuna": "Villa Devoto — Comuna 11",
+    "barrio": "Villa Devoto",
+    "ubicacion_exacta": "Mercedes y Nueva York",
+    "coordenadas": {
+      "latitud": -34.5968,
+      "longitud": -58.5098
+    },
+    "horarios_nocturnos": "Mayor actividad entre 19:00 y 02:00",
+    "precio": "Medio/Alto",
+    "accesibilidad": "Alta",
+    "tipo_experiencia": [
+      "Alta cocina",
+      "Bares de diseño",
+      "Paseo elegante"
+    ],
+    "recomendaciones": [
+      "Caminar alrededor de la plaza para elegir opciones",
+      "Conocer las reconocidas vinotecas de la zona"
+    ],
+    "informacion": "Conocido popularmente como 'el jardín de la ciudad', Devoto ofrece una propuesta nocturna premium alrededor de la imponente Plaza Arenales. Mezcla restaurantes de autor, bares modernos y una iluminación muy cuidada bajo las amplias copas de sus árboles centenarios.",
+    "imagenes_referencia": [
+      "plaza iluminada de noche",
+      "restaurantes de autor",
+      "veredas con mesas"
+    ],
+    "ideal_para": [
+      "Parejas",
+      "Turistas exigentes",
+      "Amantes del vino"
+    ]
+  },
+  {
+    "id": 18,
+    "nombre": "Corredor DoHo",
+    "categoria": "Gastronomía Moderna / Vida Nocturna",
+    "zona_comuna": "Villa Urquiza — Comuna 12",
+    "barrio": "Villa Urquiza",
+    "ubicacion_exacta": "Donado y Holmberg al 1900",
+    "coordenadas": {
+      "latitud": -34.5684,
+      "longitud": -58.4812
+    },
+    "horarios_nocturnos": "Locales abiertos hasta las 01:00",
+    "precio": "Medio",
+    "accesibilidad": "Alta",
+    "tipo_experiencia": [
+      "Gastronomía de autor",
+      "Diseño Urbano",
+      "Tendencia"
+    ],
+    "recomendaciones": [
+      "Recorrer la zona a pie para apreciar los murales",
+      "Disfrutar de la excelente coctelería"
+    ],
+    "informacion": "El 'DoHo' es uno de los distritos más nuevos y vibrantes de la noche porteña. Combina de forma excelente la arquitectura contemporánea, murales de arte urbano y una oferta gastronómica que marca tendencia, atrayendo a un público joven de diversos puntos turísticos.",
+    "imagenes_referencia": [
+      "arquitectura moderna nocturna",
+      "bares de diseño",
+      "street art iluminado"
+    ],
+    "ideal_para": [
+      "Jóvenes",
+      "Foodies",
+      "Amantes del diseño"
+    ]
+  },
+  {
+    "id": 19,
+    "nombre": "Movistar Arena y Polo Chacarita",
+    "categoria": "Entretenimiento / Gastronomía",
+    "zona_comuna": "Villa Crespo y Chacarita — Comuna 15",
+    "barrio": "Villa Crespo",
+    "ubicacion_exacta": "Humboldt 450",
+    "coordenadas": {
+      "latitud": -34.5912,
+      "longitud": -58.4468
+    },
+    "horarios_nocturnos": "Conciertos hasta las 23:30; bares cercanos hasta las 03:00",
+    "precio": "Alto (Arena) / Medio (Bares)",
+    "accesibilidad": "Alta",
+    "tipo_experiencia": [
+      "Música en vivo",
+      "Bares de especialidad",
+      "Vermuterías"
+    ],
+    "recomendaciones": [
+      "Combinar un recital con una visita a una vermutería",
+      "Explorar la calle Jorge Newbery"
+    ],
+    "informacion": "La instalación del estadio Movistar Arena transformó e impulsó por completo la vida nocturna de la zona. A la salida de los conciertos, el público se dispersa rápidamente por las modernas vermuterías y bares de diseño de Chacarita, consolidando un efervescente circuito cultural y gastronómico.",
+    "imagenes_referencia": [
+      "estadio iluminado",
+      "vermuterías llenas",
+      "salida de recital"
+    ],
+    "ideal_para": [
+      "Melómanos",
+      "Turistas",
+      "Jóvenes"
     ]
   }
 ]
