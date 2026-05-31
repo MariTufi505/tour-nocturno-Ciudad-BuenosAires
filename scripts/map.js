@@ -80,7 +80,7 @@ const STATE = {
   panY: 0,
   isDragging: false,
   dragStart: null,
-  favoritos: new Set(JSON.parse(localStorage.getItem("sdc-favoritos") || "[]")),
+  favoritos: new Set(JSON.parse(localStorage.getItem("lugaresFavoritos") || "[]")),
   _lastFocusedMarker: null,
 };
 
@@ -196,7 +196,7 @@ async function loadData() {
    HELPERS
    ============================================================ */
 function saveFavoritos() {
-  localStorage.setItem("sdc-favoritos", JSON.stringify([...STATE.favoritos]));
+  localStorage.setItem("lugaresFavoritos", JSON.stringify([...STATE.favoritos]));
 }
 
 function catOf(c) {
