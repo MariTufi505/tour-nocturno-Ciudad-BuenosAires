@@ -78,13 +78,26 @@
           </button>
         </nav>
  
-        <p class="places-explorer__count" aria-live="polite">37 lugares encontrados</p>
+        <p class="places-explorer__count" id="placesCount" aria-live="polite">
+          Cargando lugares...
+        </p>
+
+        <nav class="places-pagination places-pagination--top" aria-label="Paginación de lugares">
+          <button class="places-pagination__btn" id="prevPageTop" type="button">← Anterior</button>
+          <span class="places-pagination__status" id="pageStatusTop">Página 1 de 1</span>
+          <button class="places-pagination__btn" id="nextPageTop" type="button">Siguiente →</button>
+        </nav>
  
         <!-- Lista de lugares para explorar -->
         <ol id="contenedor-cards-places" class="place-list" aria-label="Lista de lugares"></ol>
- 
+        
+        <nav class="places-pagination places-pagination--bottom" aria-label="Paginación de lugares">
+          <button class="places-pagination__btn" id="prevPageBottom" type="button">← Anterior</button>
+          <span class="places-pagination__status" id="pageStatusBottom">Página 1 de 1</span>
+          <button class="places-pagination__btn" id="nextPageBottom" type="button">Siguiente →</button>
+        </nav>
       </section>
-</main>
+    </main>
 
     <!-- ===== FOOTER DEL SITIO ===== -->
     <footer class="site-footer">
@@ -93,6 +106,7 @@
       </p>
     </footer>
     <script src="../scripts/places.js"></script>
+    <script src="../scripts/places-pagination.js"></script>
     <script src="../scripts/places-modal.js"></script>
 
     <div class="place-modal" id="placeModal">

@@ -54,7 +54,12 @@ async function cargarDatos(contenedor) {
         if (!respuesta.ok) throw new Error("Error al cargar el JSON");
         
         datosLugares = await respuesta.json();
-        renderizarCards(datosLugares, contenedor);
+
+        if (contenedor.id === 'contenedor-cards-places' && typeof iniciarPaginacionPlaces === 'function') {
+            iniciarPaginacionPlaces(datosLugares, contenedor);
+        } else {
+            renderizarCards(datosLugares, contenedor);
+        }
     } catch (error) {
         console.error("Hubo un problema con la petición Fetch:", error);
         contenedor.innerHTML = '<p>Error al cargar los lugares. Verifica que places.json exista y sea válido.</p>';
@@ -66,23 +71,15 @@ function renderizarCards(lugares, contenedor) {
     contenedor.innerHTML = ''; // Limpiamos el contenedor
 
     // Limitamos el array a 3 elementos si estamos en el inicio
-    const lugaresAMostrar = contenedor.id === 'contenedor-cards-index' ? lugares.slice(0, 4) : lugares;
+    const lugaresAMostrar = 
+        contenedor.id === 'contenedor-cards-index' 
+        ? lugares.slice(0, 4) 
+        : lugares;
 
     lugaresAMostrar.forEach(lugar => {
         const card = document.createElement('article');
         card.classList.add('card');
         
-        // Aplicamos estilos base y flexbox para igualar alturas
-        /*Object.assign(card.style, {
-            border: "1px solid #ccc",
-            borderRadius: "8px",
-            padding: "15px",
-            cursor: "pointer",
-            position: "relative",
-            display: "flex",
-            flexDirection: "column"
-        });*/
-
         const esFavorito = favoritos.includes(lugar.id);
 
         const esHome = contenedor.id === 'contenedor-cards-index';
@@ -103,7 +100,8 @@ function renderizarCards(lugares, contenedor) {
             <mark class="card__badge">${lugar.categoria}</mark>
             <button 
                 class="card__bookmark btn-favorito ${esFavorito ? 'card__bookmark--saved' : ''}" 
-                type="button" 
+                type="button"
+                data-lugar-id="${lugar.id}"
                 aria-label="${esFavorito ? 'Quitar de favoritos' : 'Agregar a favoritos'}"
                 title="${esFavorito ? 'Quitar de favoritos' : 'Agregar a favoritos'}"
             >
@@ -244,5 +242,43 @@ function manejarFavorito(idLugar, botonElemento) {
         'lugaresFavoritos',
         JSON.stringify(favoritos)
     );
+
+    localStorage.setItem(
+    'lugaresFavoritos',
+    JSON.stringify(favoritos)
+);
+
+sincronizarBotonesFavorito(idLugar);
+}
+
+function sincronizarBotonesFavorito(idLugar) {
+    const estaEnFavoritos = favoritos.includes(idLugar);
+
+    const botonesCard = document.querySelectorAll(
+        `.btn-favorito[data-lugar-id="${idLugar}"]`
+    );
+
+    botonesCard.forEach((boton) => {
+        boton.textContent = estaEnFavoritos ? '❤️' : '🤍';
+
+        boton.classList.toggle(
+            'card__bookmark--saved',
+            estaEnFavoritos
+        );
+
+        boton.setAttribute(
+            'aria-label',
+            estaEnFavoritos
+                ? 'Quitar de favoritos'
+                : 'Agregar a favoritos'
+        );
+
+        boton.setAttribute(
+            'title',
+            estaEnFavoritos
+                ? 'Quitar de favoritos'
+                : 'Agregar a favoritos'
+        );
+    });
 }
 
