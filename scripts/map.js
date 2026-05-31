@@ -95,24 +95,6 @@ let COMUNAS = {},
    CARGA Y NORMALIZACIÓN DE DATOS
    ============================================================ */
 
-/** Elimina [cite: N] que pueden venir en los strings del JSON */
-function stripCites(str) {
-  return typeof str === "string"
-    ? str.replace(/\[cite:\s*\d+\]/g, "").trim()
-    : str;
-}
-
-/** Limpia recursivamente todos los strings de un objeto/array */
-function cleanCites(val) {
-  if (Array.isArray(val)) return val.map(cleanCites);
-  if (val && typeof val === "object") {
-    const out = {};
-    for (const [k, v] of Object.entries(val)) out[k] = cleanCites(v);
-    return out;
-  }
-  return stripCites(val);
-}
-
 /**
  * Extrae el id de comuna desde "Nombre Barrio — Comuna N"
  * Devuelve el número o null si no lo encuentra.
@@ -198,7 +180,7 @@ async function loadData() {
     ? rawPlaces
     : rawPlaces.lugares || [];
 
-  LUGARES = placesArr.map(cleanCites);
+  LUGARES = placesArr;
 
   // Convertir FeatureCollection a formato interno
   GEO_BARRIOS = geo.features.map((f) => ({
