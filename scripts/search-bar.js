@@ -3,6 +3,7 @@
 // ==========================================
 
 const PLACES_JSON_URL = "/data/places.json";
+const PLACES_PAGE_URL = "/pages/places.html";
 
 let lugaresCacheados = null;
 
@@ -43,7 +44,6 @@ function crearDropdown(inputEl) {
     display: "none",
   });
 
-  // El wrapper del input necesita position: relative para que el dropdown se posicione bien
   const wrapper = inputEl.closest(".site-search");
   if (wrapper) {
     wrapper.style.position = "relative";
@@ -76,7 +76,6 @@ function renderDropdown(dropdown, inputEl, lugares, query) {
     li.setAttribute("tabindex", "0");
     li.setAttribute("data-lugar-id", lugar.id);
 
-    // Resaltar la parte que coincide con el query
     const regex = new RegExp(
       `(${query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`,
       "gi",
@@ -123,21 +122,32 @@ function renderDropdown(dropdown, inputEl, lugares, query) {
     });
 
     const irALugar = () => {
-      dropdown.style.display = "none";
-      inputEl.value = "";
-      abrirModalBusqueda(lugar);
+      const enPlaces = window.location.pathname.includes("places.html");
+
+      if (
+        enPlaces &&
+        typeof abrirModal === "function" &&
+        typeof datosLugares !== "undefined"
+      ) {
+        dropdown.style.display = "none";
+        inputEl.value = "";
+        abrirModal(lugar);
+      } else {
+        sessionStorage.setItem("abrirLugarId", lugar.id);
+        window.location.href = PLACES_PAGE_URL;
+      }
     };
 
     li.addEventListener("mousedown", (e) => {
-      e.preventDefault(); // evita que el input pierda foco y dispare el cierre
+      e.preventDefault();
       irALugar();
     });
+
     li.addEventListener("keydown", (e) => {
       if (e.key === "Enter" || e.key === " ") {
         e.preventDefault();
         irALugar();
       }
-      // Navegar con flechas
       if (e.key === "ArrowDown") {
         e.preventDefault();
         const next = li.nextElementSibling;
@@ -185,7 +195,6 @@ function iniciarBusqueda() {
     }, 150);
   });
 
-  // Flechas desde el input bajan al primer resultado
   inputEl.addEventListener("keydown", (e) => {
     if (e.key === "ArrowDown") {
       e.preventDefault();
@@ -198,125 +207,63 @@ function iniciarBusqueda() {
     }
   });
 
-  // Cerrar al hacer click fuera
   document.addEventListener("click", (e) => {
     if (!inputEl.closest(".site-search").contains(e.target)) {
       dropdown.style.display = "none";
     }
   });
 
-  // Evitar que el form haga submit si hay query
   inputEl.closest("form")?.addEventListener("submit", (e) => {
     e.preventDefault();
   });
 }
 
 // ==========================================
-// MODAL DE BÚSQUEDA
-// Usa el modal existente de la página si está disponible (places.html),
-// o crea uno propio si no existe (index.html u otras páginas).
+// APERTURA AUTOMÁTICA EN PLACES.HTML
 // ==========================================
 
-let favoritosSearch =
-  JSON.parse(localStorage.getItem("lugaresFavoritos")) || [];
+function intentarAbrirLugarDesdeSession() {
+  const idGuardado = sessionStorage.getItem("abrirLugarId");
+  if (!idGuardado) return;
 
-function asegurarModal() {
-  if (document.getElementById("placeModal")) {
-    // El modal ya existe — nos aseguramos de que tenga los listeners
-    const modal = document.getElementById("placeModal");
-    if (!modal.dataset.searchListeners) {
-      modal.dataset.searchListeners = "true";
-      modal.addEventListener("click", (e) => {
-        if (e.target === modal) cerrarModalBusqueda();
-      });
-      document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape") cerrarModalBusqueda();
-      });
+  sessionStorage.removeItem("abrirLugarId");
+  const id = parseInt(idGuardado, 10);
+
+  // Reintenta hasta que datosLugares y abrirModal estén disponibles
+  const intentar = (intentos = 0) => {
+    if (
+      typeof datosLugares !== "undefined" &&
+      datosLugares.length > 0 &&
+      typeof abrirModal === "function"
+    ) {
+      const lugar = datosLugares.find((l) => l.id === id);
+      if (lugar) abrirModal(lugar);
+    } else if (intentos < 30) {
+      setTimeout(() => intentar(intentos + 1), 100);
     }
-    return;
-  }
+  };
 
-  const modal = document.createElement("div");
-  modal.id = "placeModal";
-  modal.className = "place-modal";
-  modal.dataset.searchListeners = "true";
-
-  const content = document.createElement("div");
-  content.id = "placeModalContent";
-  content.className = "place-modal__content";
-
-  modal.appendChild(content);
-  document.body.appendChild(modal);
-
-  modal.addEventListener("click", (e) => {
-    if (e.target === modal) cerrarModalBusqueda();
-  });
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") cerrarModalBusqueda();
-  });
-}
-
-function abrirModalBusqueda(lugar) {
-  if (typeof abrirModal === "function") {
-    abrirModal(lugar);
-    return;
-  }
-
-  asegurarModal();
-
-  favoritosSearch = JSON.parse(localStorage.getItem("lugaresFavoritos")) || [];
-  const esFav = favoritosSearch.includes(lugar.id);
-
-  const contenido = document.getElementById("placeModalContent");
-  contenido.innerHTML = `
-    <article class="place-detail">
-      <button class="place-detail__close" aria-label="Cerrar">×</button>
-
-      <button class="place-detail__favorite">
-        ${esFav ? "❤️ En favoritos" : "♡ Agregar a favoritos"}
-      </button>
-
-      <div class="place-detail__image">Imagen</div>
-
-      <div class="place-detail__info">
-        <h2>${lugar.nombre}</h2>
-        <p>${lugar.informacion}</p>
-        <p><strong>Horario:</strong> ${lugar.horarios_nocturnos}</p>
-        <p><strong>Precio:</strong> ${lugar.precio}</p>
-        <p><strong>Ubicación:</strong> ${lugar.ubicacion_exacta}</p>
-      </div>
-    </article>
-  `;
-
-  document.getElementById("placeModal").classList.add("place-modal--open");
-
-  contenido
-    .querySelector(".place-detail__close")
-    .addEventListener("click", cerrarModalBusqueda);
-
-  const btnFav = contenido.querySelector(".place-detail__favorite");
-  btnFav.addEventListener("click", () => {
-    favoritosSearch =
-      JSON.parse(localStorage.getItem("lugaresFavoritos")) || [];
-    const idx = favoritosSearch.indexOf(lugar.id);
-    if (idx === -1) favoritosSearch.push(lugar.id);
-    else favoritosSearch.splice(idx, 1);
-    localStorage.setItem("lugaresFavoritos", JSON.stringify(favoritosSearch));
-    btnFav.textContent = favoritosSearch.includes(lugar.id)
-      ? "❤️ En favoritos"
-      : "♡ Agregar a favoritos";
-  });
-}
-
-function cerrarModalBusqueda() {
-  const modal = document.getElementById("placeModal");
-  if (modal) modal.classList.remove("place-modal--open");
+  intentar();
 }
 
 // ==========================================
 // INIT
 // ==========================================
 
+function registrarEscapeModal() {
+  document.addEventListener(
+    "keydown",
+    (e) => {
+      if (e.key === "Escape") {
+        if (typeof cerrarModal === "function") cerrarModal();
+      }
+    },
+    { once: false },
+  );
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   iniciarBusqueda();
+  intentarAbrirLugarDesdeSession();
+  registrarEscapeModal();
 });
