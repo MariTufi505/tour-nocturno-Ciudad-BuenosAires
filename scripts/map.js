@@ -577,11 +577,13 @@ function buildFilters() {
 
     btn.append(dot, ` ${label} `, countEl);
     btn.addEventListener("click", () => {
-      STATE.filtro = value;
+      STATE.filtro = STATE.filtro === value && value !== "todos"
+        ? "todos"
+        : value;
       ul.querySelectorAll(".filter-btn").forEach((b) => {
         const bCat = b.dataset.value;
         const bCol = bCat === "todos" ? "#6c63ff" : catOf(bCat).color;
-        const on = bCat === value;
+        const on = bCat === STATE.filtro;
         b.className = "filter-btn" + (on ? " active" : "");
         b.setAttribute("aria-pressed", on ? "true" : "false");
         b.style.cssText = on
