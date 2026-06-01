@@ -1,4 +1,3 @@
-import { filterPlaces } from "./place-filters.js";
 "use strict";
 
 /* ============================================================
