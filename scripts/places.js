@@ -1,46 +1,75 @@
 // ==========================================
 // CONFIGURACIÓN GLOBAL Y LOCALSTORAGE
 // ==========================================
-const URL_JSON = '/data/places.json';
+const URL_JSON = "/data/places.json";
 // Obtenemos los favoritos del localStorage o inicializamos un array vacío
-let favoritos = JSON.parse(localStorage.getItem('lugaresFavoritos')) || [];
+let favoritos = JSON.parse(localStorage.getItem("lugaresFavoritos")) || [];
 let datosLugares = []; // Array donde se guardarán los objetos del JSON
 
 // Creamos la "mini ventana" (tooltip) y la agregamos al body
 // Variable global para el tooltip
-let tooltip; 
+let tooltip;
 
-document.addEventListener('DOMContentLoaded', () => {
-    // 1. Crear el tooltip
-    tooltip = document.createElement('div');
-    tooltip.id = 'tooltip-resena';
-    Object.assign(tooltip.style, {
-        position: 'absolute',
-        display: 'none',
-        backgroundColor: 'rgba(0, 0, 0, 0.9)',
-        color: '#fff',
-        padding: '12px',
-        borderRadius: '8px',
-        pointerEvents: 'none',
-        zIndex: '1000',
-        maxWidth: '250px',
-        fontSize: '0.9rem',
-        boxShadow: '0 4px 6px rgba(0,0,0,0.3)'
-    });
-    document.body.appendChild(tooltip);
+// ==========================================
+// MAPEO DE IMÁGENES POR ID
+// ==========================================
+function obtenerImagenLugar(lugar) {
+  const imagenes = {
+    1: "teatro-colon.jpeg",
+    2: "el-querandi.jpg",
+    3: "puerto-madero.jpg",
+    4: "avenida-corrientes.png",
+    5: "planetario.JPG",
+    6: "barrio-chino.jpg",
+    7: "plaza-serrano.jpg",
+    8: "usina-del-arte.jpg",
+    9: "caminito.jpg",
+    10: "parque-centenario.jpg",
+    11: "plaza-francia.jpg",
+    12: "homero-manzi.jpg",
+    13: "Barrio-Coreano.jpg",
+    14: "torre-monumental.jpg",
+    15: "pizzeria-cedron.jpg",
+    16: "polo-gastronomico-falcon.jpg",
+    17: "plaza-arenales.jpg",
+    18: "corredor-Doho.jpg",
+    19: "movistar-arena.png",
+  };
+  const archivo = imagenes[lugar.id];
+  return archivo ? `/assets/images/${archivo}` : null;
+}
 
-    // 2. Cargar los contenedores
-    const contenedorIndex = document.getElementById('contenedor-cards-index');
-    const contenedorPlaces = document.getElementById('contenedor-cards-places');
-    // Verificamos que el contenedor exista antes de intentar cargar los datos
-    // Esto evita errores en consola si usas este mismo JS en otras páginas (como map.html)
-    if (contenedorIndex) {
-        cargarDatos(contenedorIndex);
-    }
+document.addEventListener("DOMContentLoaded", () => {
+  // 1. Crear el tooltip
+  tooltip = document.createElement("div");
+  tooltip.id = "tooltip-resena";
+  Object.assign(tooltip.style, {
+    position: "absolute",
+    display: "none",
+    backgroundColor: "rgba(0, 0, 0, 0.9)",
+    color: "#fff",
+    padding: "12px",
+    borderRadius: "8px",
+    pointerEvents: "none",
+    zIndex: "1000",
+    maxWidth: "250px",
+    fontSize: "0.9rem",
+    boxShadow: "0 4px 6px rgba(0,0,0,0.3)",
+  });
+  document.body.appendChild(tooltip);
 
-    if (contenedorPlaces) {
+  // 2. Cargar los contenedores
+  const contenedorIndex = document.getElementById("contenedor-cards-index");
+  const contenedorPlaces = document.getElementById("contenedor-cards-places");
+  // Verificamos que el contenedor exista antes de intentar cargar los datos
+  // Esto evita errores en consola si usas este mismo JS en otras páginas (como map.html)
+  if (contenedorIndex) {
+    cargarDatos(contenedorIndex);
+  }
+
+  if (contenedorPlaces) {
     cargarDatos(contenedorPlaces);
-    }
+  }
 });
 
 // ==========================================
@@ -49,236 +78,209 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // 1. Cargar el JSON y convertirlo a Array de objetos
 async function cargarDatos(contenedor) {
-    try {
-        const respuesta = await fetch(URL_JSON);
-        if (!respuesta.ok) throw new Error("Error al cargar el JSON");
-        
-        datosLugares = await respuesta.json();
+  try {
+    const respuesta = await fetch(URL_JSON);
+    if (!respuesta.ok) throw new Error("Error al cargar el JSON");
 
-        if (contenedor.id === 'contenedor-cards-places' && typeof iniciarPaginacionPlaces === 'function') {
-            iniciarPaginacionPlaces(datosLugares, contenedor);
-        } else {
-            renderizarCards(datosLugares, contenedor);
-        }
-    } catch (error) {
-        console.error("Hubo un problema con la petición Fetch:", error);
-        contenedor.innerHTML = '<p>Error al cargar los lugares. Verifica que places.json exista y sea válido.</p>';
+    datosLugares = await respuesta.json();
+
+    if (
+      contenedor.id === "contenedor-cards-places" &&
+      typeof iniciarPaginacionPlaces === "function"
+    ) {
+      iniciarPaginacionPlaces(datosLugares, contenedor);
+    } else {
+      renderizarCards(datosLugares, contenedor);
     }
+  } catch (error) {
+    console.error("Hubo un problema con la petición Fetch:", error);
+    contenedor.innerHTML =
+      "<p>Error al cargar los lugares. Verifica que places.json exista y sea válido.</p>";
+  }
 }
 
 // 2. Renderizar las Cards en el HTML
 function renderizarCards(lugares, contenedor) {
-    contenedor.innerHTML = ''; // Limpiamos el contenedor
+  contenedor.innerHTML = ""; // Limpiamos el contenedor
 
-    // Limitamos el array a 3 elementos si estamos en el inicio
-    const lugaresAMostrar = 
-        contenedor.id === 'contenedor-cards-index' 
-        ? lugares.slice(0, 4) 
-        : lugares;
+  // Limitamos el array a 4 elementos si estamos en el inicio
+  const lugaresAMostrar =
+    contenedor.id === "contenedor-cards-index" ? lugares.slice(0, 4) : lugares;
 
-    lugaresAMostrar.forEach(lugar => {
-        const card = document.createElement('article');
-        card.classList.add('card');
-        
-        const esFavorito = favoritos.includes(lugar.id);
+  lugaresAMostrar.forEach((lugar) => {
+    const card = document.createElement("article");
+    card.classList.add("card");
 
-        const esHome = contenedor.id === 'contenedor-cards-index';
-        const descripcionCorta = esHome
-            ? `${lugar.informacion.substring(0, 100)}...`
-            : `${lugar.informacion.substring(0, 200)}...`;
+    const esFavorito = favoritos.includes(lugar.id);
 
-        // Generamos los items de recomendaciones para la lista (si existen)
-        const listaRecomendaciones = lugar.recomendaciones && lugar.recomendaciones.length > 0 
-            ? lugar.recomendaciones.map(rec => `<li>${rec}</li>`).join('') 
-            : '<li>Sin recomendaciones específicas</li>';
+    const esHome = contenedor.id === "contenedor-cards-index";
+    const descripcionCorta = esHome
+      ? `${lugar.informacion.substring(0, 100)}...`
+      : `${lugar.informacion.substring(0, 200)}...`;
 
-        
-        // Inyectamos el HTML. Usamos flex-grow: 1 para empujar el botón hacia abajo.
-       card.innerHTML = `
+    // Generamos los items de recomendaciones para la lista (si existen)
+    const listaRecomendaciones =
+      lugar.recomendaciones && lugar.recomendaciones.length > 0
+        ? lugar.recomendaciones.map((rec) => `<li>${rec}</li>`).join("")
+        : "<li>Sin recomendaciones específicas</li>";
+
+    // Imagen de la card
+    const rutaImagen = obtenerImagenLugar(lugar);
+    const imgHTML = rutaImagen
+      ? `<img class="card__img" src="${rutaImagen}" alt="${lugar.nombre}" loading="lazy">`
+      : "";
+
+    // Inyectamos el HTML. Usamos flex-grow: 1 para empujar el botón hacia abajo.
+    card.innerHTML = `
         <div class="card__inner">
-        <figure class="card__media">
-            <mark class="card__badge">${lugar.categoria}</mark>
-            <button 
-                class="card__bookmark btn-favorito ${esFavorito ? 'card__bookmark--saved' : ''}" 
-                type="button"
-                data-lugar-id="${lugar.id}"
-                aria-label="${esFavorito ? 'Quitar de favoritos' : 'Agregar a favoritos'}"
-                title="${esFavorito ? 'Quitar de favoritos' : 'Agregar a favoritos'}"
-            >
-                ${esFavorito ? '❤️' : '🤍'}
-            </button>
-            <span class="card__gradient" aria-hidden="true"></span>
-        </figure>
+            <figure class="card__media">
+                ${imgHTML}
+                <mark class="card__badge">${lugar.categoria}</mark>
+                <button 
+                    class="card__bookmark btn-favorito ${esFavorito ? "card__bookmark--saved" : ""}" 
+                    type="button"
+                    data-lugar-id="${lugar.id}"
+                    aria-label="${esFavorito ? "Quitar de favoritos" : "Agregar a favoritos"}"
+                    title="${esFavorito ? "Quitar de favoritos" : "Agregar a favoritos"}"
+                >
+                    ${esFavorito ? "❤️" : "🤍"}
+                </button>
+                <span class="card__gradient" aria-hidden="true"></span>
+            </figure>
 
-        <section class="card__body">
-            <h3 class="card__title">${lugar.nombre}</h3>
-            <address class="card__location">
-                <span class="card__location-text">
-                    📍 ${lugar.barrio} - ${lugar.ubicacion_exacta}
-                </span>
-            </address>
+            <section class="card__body">
+                <h3 class="card__title">${lugar.nombre}</h3>
+                <address class="card__location">
+                    <span class="card__location-text">
+                        📍 ${lugar.barrio} - ${lugar.ubicacion_exacta}
+                    </span>
+                </address>
 
-            <p class="card__description descripcion-corta">
-                ${descripcionCorta}
-            </p>
+                <p class="card__description descripcion-corta">
+                    ${descripcionCorta}
+                </p>
 
-            <div class="info-extendida" style="display: none;">
-                <p><strong>Historia/Detalles:</strong> ${lugar.informacion}</p>
-                <p><strong>Horario Nocturno:</strong> ${lugar.horarios_nocturnos}</p>
-                <p><strong>Precio:</strong> ${lugar.precio}</p>
-            </div>
+                <div class="info-extendida" style="display: none;">
+                    <p><strong>Historia/Detalles:</strong> ${lugar.informacion}</p>
+                    <p><strong>Horario Nocturno:</strong> ${lugar.horarios_nocturnos}</p>
+                    <p><strong>Precio:</strong> ${lugar.precio}</p>
+                </div>
 
-            <footer class="card__footer">
-                <button class="card__btn" type="button">Ver más +</button>
-            </footer>
-        </section>
-    </div>
+                <footer class="card__footer">
+                    <button class="card__btn" type="button">Ver más +</button>
+                </footer>
+            </section>
+        </div>
 `;
 
-        // 3. Lógica del Hover (Mini ventana)
-        card.addEventListener('mousemove', (e) => {
-            const idealParaTexto = lugar.ideal_para ? lugar.ideal_para.join(', ') : 'Todos';
-            tooltip.innerHTML = `<strong>Ideal para:</strong><br>${idealParaTexto}`;
-            tooltip.style.display = 'block';
-            tooltip.style.left = `${e.pageX + 15}px`;
-            tooltip.style.top = `${e.pageY + 15}px`;
-        });
-
-        card.addEventListener('mouseleave', () => {
-            tooltip.style.display = 'none';
-        });
-
-        card.addEventListener('click', (e) => {
-
-            if (e.target.classList.contains('btn-favorito')) return;
-
-            if (typeof abrirModal === 'function') {
-            abrirModal(lugar);
-            } 
-        });
-        // 4. Lógica del Click (Mostrar info extendida)
-        card.addEventListener('click', (e) => {
-            // Evitamos que al presionar el botón de favorito se abra la tarjeta
-            if (e.target.classList.contains('btn-favorito')) return;
-
-             // Si existe el modal, usamos el modal
-            if (typeof abrirModal === 'function') {
-                abrirModal(lugar);
-                return;
-            }
-
-            const infoExtendida = card.querySelector('.info-extendida');
-            const descCorta = card.querySelector('.descripcion-corta');
-            
-            const btnExpandir = card.querySelector('.card__btn');
-            if (infoExtendida.style.display === 'none') {
-                infoExtendida.style.display = 'block';
-                descCorta.style.display = 'none'; // Ocultamos el extracto cuando se expande
-                
-                btnExpandir.textContent = 'Ver menos -';
-            
-            } else {
-                infoExtendida.style.display = 'none';
-                descCorta.style.display = 'block'; // Mostramos el extracto cuando se contrae
-                
-                btnExpandir.textContent = 'Ver más +';
-            }
-        });
-
-        // 5. Lógica del Botón Favorito (LocalStorage)
-        const btnFavorito = card.querySelector('.btn-favorito');
-        btnFavorito.addEventListener('click', (e) => {
-            e.stopPropagation(); // Seguridad extra para evitar que el click afecte a la card
-            manejarFavorito(lugar.id, btnFavorito);
-        });
-
-        contenedor.appendChild(card);
+    // 3. Lógica del Hover (Mini ventana)
+    card.addEventListener("mousemove", (e) => {
+      const idealParaTexto = lugar.ideal_para
+        ? lugar.ideal_para.join(", ")
+        : "Todos";
+      tooltip.innerHTML = `<strong>Ideal para:</strong><br>${idealParaTexto}`;
+      tooltip.style.display = "block";
+      tooltip.style.left = `${e.pageX + 15}px`;
+      tooltip.style.top = `${e.pageY + 15}px`;
     });
+
+    card.addEventListener("mouseleave", () => {
+      tooltip.style.display = "none";
+    });
+
+    // 4. Lógica del Click (Modal o expandir)
+    card.addEventListener("click", (e) => {
+      // Evitamos que al presionar el botón de favorito se abra la tarjeta
+      if (e.target.classList.contains("btn-favorito")) return;
+
+      // Si existe el modal, usamos el modal
+      if (typeof abrirModal === "function") {
+        abrirModal(lugar);
+        return;
+      }
+
+      const infoExtendida = card.querySelector(".info-extendida");
+      const descCorta = card.querySelector(".descripcion-corta");
+
+      const btnExpandir = card.querySelector(".card__btn");
+      if (infoExtendida.style.display === "none") {
+        infoExtendida.style.display = "block";
+        descCorta.style.display = "none";
+        btnExpandir.textContent = "Ver menos -";
+      } else {
+        infoExtendida.style.display = "none";
+        descCorta.style.display = "block";
+        btnExpandir.textContent = "Ver más +";
+      }
+    });
+
+    // 5. Lógica del Botón Favorito (LocalStorage)
+    const btnFavorito = card.querySelector(".btn-favorito");
+    btnFavorito.addEventListener("click", (e) => {
+      e.stopPropagation(); // Seguridad extra para evitar que el click afecte a la card
+      manejarFavorito(lugar.id, btnFavorito);
+    });
+
+    contenedor.appendChild(card);
+  });
 }
 
 // Función para añadir/quitar del LocalStorage
 function manejarFavorito(idLugar, botonElemento) {
-    const indice = favoritos.indexOf(idLugar);
-    if (indice === -1) {
-        favoritos.push(idLugar);
-    } else {
-        favoritos.splice(indice, 1);
-    }
+  const indice = favoritos.indexOf(idLugar);
+  if (indice === -1) {
+    favoritos.push(idLugar);
+  } else {
+    favoritos.splice(indice, 1);
+  }
 
-    const estaEnFavoritos = favoritos.includes(idLugar);
+  const estaEnFavoritos = favoritos.includes(idLugar);
 
-    if (botonElemento.classList.contains('place-detail__favorite')) {
+  if (botonElemento.classList.contains("place-detail__favorite")) {
+    botonElemento.textContent = estaEnFavoritos
+      ? "❤️ En favoritos"
+      : "♡ Agregar a favoritos";
+  } else {
+    botonElemento.textContent = estaEnFavoritos ? "❤️" : "🤍";
 
-        botonElemento.textContent = estaEnFavoritos
-            ? '❤️ En favoritos'
-            : '♡ Agregar a favoritos';
+    botonElemento.classList.toggle("card__bookmark--saved", estaEnFavoritos);
 
-    } else {
-        botonElemento.textContent = estaEnFavoritos
-            ? '❤️'
-            : '🤍';
-
-        botonElemento.classList.toggle(
-            'card__bookmark--saved',
-            estaEnFavoritos
-        );
-
-        botonElemento.setAttribute(
-            'aria-label',
-            estaEnFavoritos
-                ? 'Quitar de favoritos'
-                : 'Agregar a favoritos'
-        );
-
-        botonElemento.setAttribute(
-            'title',
-            estaEnFavoritos
-                ? 'Quitar de favoritos'
-                : 'Agregar a favoritos'
-        );
-    }
-
-    localStorage.setItem(
-        'lugaresFavoritos',
-        JSON.stringify(favoritos)
+    botonElemento.setAttribute(
+      "aria-label",
+      estaEnFavoritos ? "Quitar de favoritos" : "Agregar a favoritos",
     );
 
-    localStorage.setItem(
-    'lugaresFavoritos',
-    JSON.stringify(favoritos)
-);
+    botonElemento.setAttribute(
+      "title",
+      estaEnFavoritos ? "Quitar de favoritos" : "Agregar a favoritos",
+    );
+  }
 
-sincronizarBotonesFavorito(idLugar);
+  localStorage.setItem("lugaresFavoritos", JSON.stringify(favoritos));
+
+  sincronizarBotonesFavorito(idLugar);
 }
 
 function sincronizarBotonesFavorito(idLugar) {
-    const estaEnFavoritos = favoritos.includes(idLugar);
+  const estaEnFavoritos = favoritos.includes(idLugar);
 
-    const botonesCard = document.querySelectorAll(
-        `.btn-favorito[data-lugar-id="${idLugar}"]`
+  const botonesCard = document.querySelectorAll(
+    `.btn-favorito[data-lugar-id="${idLugar}"]`,
+  );
+
+  botonesCard.forEach((boton) => {
+    boton.textContent = estaEnFavoritos ? "❤️" : "🤍";
+
+    boton.classList.toggle("card__bookmark--saved", estaEnFavoritos);
+
+    boton.setAttribute(
+      "aria-label",
+      estaEnFavoritos ? "Quitar de favoritos" : "Agregar a favoritos",
     );
 
-    botonesCard.forEach((boton) => {
-        boton.textContent = estaEnFavoritos ? '❤️' : '🤍';
-
-        boton.classList.toggle(
-            'card__bookmark--saved',
-            estaEnFavoritos
-        );
-
-        boton.setAttribute(
-            'aria-label',
-            estaEnFavoritos
-                ? 'Quitar de favoritos'
-                : 'Agregar a favoritos'
-        );
-
-        boton.setAttribute(
-            'title',
-            estaEnFavoritos
-                ? 'Quitar de favoritos'
-                : 'Agregar a favoritos'
-        );
-    });
+    boton.setAttribute(
+      "title",
+      estaEnFavoritos ? "Quitar de favoritos" : "Agregar a favoritos",
+    );
+  });
 }
-
