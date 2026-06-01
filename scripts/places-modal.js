@@ -1,6 +1,7 @@
 function abrirModal(lugar) {
     const modal = document.getElementById('placeModal');
     const contenido = document.getElementById('placeModalContent');
+    const imagenLugar = `../assets/images/${lugar.imagen}`;
 
     contenido.innerHTML = `
         <article class="place-detail">
@@ -12,9 +13,13 @@ function abrirModal(lugar) {
                 : '♡ Agregar a favoritos'}
             </button>
 
-            <div class="place-detail__image">
-                Imagen
-            </div>
+            <figure class="place-detail__image">
+                <img
+                    src="${imagenLugar}"
+                    alt="${lugar.nombre}"
+                    class="place-detail__img"
+                >
+            </figure>
 
             <div class="place-detail__info">
                 <h2>${lugar.nombre}</h2>

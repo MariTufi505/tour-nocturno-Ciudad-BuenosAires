@@ -186,6 +186,8 @@ function renderizarCards(lugares, contenedor) {
             ? `${lugar.informacion.substring(0, 100)}...`
             : `${lugar.informacion.substring(0, 200)}...`;
 
+        const imagenLugar = `../assets/images/${lugar.imagen}`;
+
         // Generamos los items de recomendaciones para la lista (si existen)
         const listaRecomendaciones = lugar.recomendaciones && lugar.recomendaciones.length > 0 
             ? lugar.recomendaciones.map(rec => `<li>${rec}</li>`).join('') 
@@ -196,6 +198,11 @@ function renderizarCards(lugares, contenedor) {
        card.innerHTML = `
         <div class="card__inner">
         <figure class="card__media">
+            <img 
+                class="card__img" 
+                src="${imagenLugar}" 
+                alt="${lugar.nombre}" 
+            />
             <mark class="card__badge">${lugar.categoria}</mark>
             <button 
                 class="card__bookmark btn-favorito ${esFavorito ? 'card__bookmark--saved' : ''}" 

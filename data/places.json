@@ -24,6 +24,7 @@
       "Ideal para fotografía nocturna"
     ],
     "informacion": "El Teatro Colón es considerado uno de los teatros líricos más importantes del mundo gracias a su acústica y arquitectura monumental. Durante la noche, el edificio iluminado sobre Avenida 9 de Julio genera una atmósfera elegante y clásica. Las funciones de ópera, ballet y conciertos sinfónicos atraen tanto a turistas como a residentes locales. Incluso quienes no ingresan suelen acercarse para fotografiar la fachada y vivir el ambiente cultural nocturno del centro porteño.",
+    "imagen": "teatro-colon.jpeg",
     "imagenes_referencia": [
       "fachada iluminada",
       "interior del teatro",
@@ -60,6 +61,7 @@
       "Elegir opción con cena incluida"
     ],
     "informacion": "El Querandí funciona dentro de un edificio histórico con decoración clásica y ambiente íntimo. El espectáculo combina tango, música en vivo y relatos históricos sobre Buenos Aires. La iluminación tenue y el estilo antiguo del salón generan una experiencia auténticamente porteña. Es especialmente recomendable para quienes buscan combinar gastronomía típica con cultura nocturna argentina.",
+    "imagen": "el-querandi.jpg",
     "imagenes_referencia": [
       "show de tango",
       "salón interior",
@@ -96,6 +98,7 @@
       "Cenar frente al río"
     ],
     "informacion": "Puerto Madero es el sector más moderno de Buenos Aires y durante la noche se transforma gracias a las luces reflejadas sobre los diques. La combinación de rascacielos, puentes iluminados y restaurantes genera un paisaje urbano muy diferente al resto de la ciudad. Es una de las zonas más seguras y turísticas para recorrer de noche. El Puente de la Mujer y la Costanera Sur son algunos de sus principales atractivos.",
+    "imagen": "puerto-madero.jpg",
     "imagenes_referencia": [
       "Puente de la Mujer",
       "dique iluminado",
@@ -132,6 +135,7 @@
       "Ideal para caminar"
     ],
     "informacion": "La Avenida Corrientes es conocida como la calle que nunca duerme debido a su intensa actividad cultural y gastronómica nocturna. Los teatros, bares y pizzerías generan un ambiente dinámico lleno de movimiento incluso después de medianoche. Caminar por esta avenida permite experimentar el lado más clásico del entretenimiento porteño. Sus carteles luminosos recuerdan a importantes distritos teatrales internacionales.",
+    "imagen": "teatro-colon.jpeg",
     "imagenes_referencia": [
       "carteles luminosos",
       "teatros",
@@ -168,6 +172,7 @@
       "Ideal para familias"
     ],
     "informacion": "El Planetario se encuentra rodeado por los Bosques de Palermo y de noche adquiere un aspecto futurista gracias a su iluminación exterior. Las actividades astronómicas permiten observar estrellas y planetas mediante telescopios abiertos al público. El entorno verde y tranquilo contrasta con el movimiento de la ciudad. Es una excelente opción para quienes buscan turismo nocturno más relajado y educativo.",
+    "imagen": "planetario.jpg",
     "imagenes_referencia": [
       "planetario iluminado",
       "telescopios",
@@ -204,6 +209,7 @@
       "Ideal para fotografías"
     ],
     "informacion": "El Barrio Chino ofrece una experiencia nocturna distinta dentro de Buenos Aires gracias a sus luces, faroles y gastronomía asiática. Los locales de ramen, bubble tea y comida coreana o china generan un ambiente muy activo especialmente los fines de semana. La zona suele llenarse de jóvenes y turistas buscando opciones gastronómicas diferentes. La decoración urbana nocturna lo convierte en uno de los lugares más fotogénicos de Belgrano.",
+    "imagen": "barrio-chino.jpg",
     "imagenes_referencia": [
       "arco chino",
       "faroles rojos",
@@ -240,6 +246,7 @@
       "Visitar fines de semana"
     ],
     "informacion": "Plaza Serrano es uno de los principales centros de vida nocturna de Buenos Aires. La zona está rodeada de bares, cervecerías y restaurantes con estilos muy variados. Durante la noche las calles se llenan de música, turistas y movimiento constante. También destaca por su estética urbana moderna y ambiente internacional.",
+    "imagen": "plaza-serrano.jpg",
     "imagenes_referencia": [
       "bares iluminados",
       "arte callejero",
@@ -275,7 +282,8 @@
       "Ideal para conciertos",
       "Combinar con paseo por La Boca"
     ],
-    "informacion": "La Usina del Arte es uno de los centros culturales más importantes del sur de la ciudad. El edificio industrial restaurado posee una arquitectura impactante y suele albergar conciertos, muestras y espectáculos gratuitos. Por la noche, la iluminación del edificio crea una atmósfera muy especial. Es una excelente opción para explorar una cara más artística y cultural de Buenos Aires.",
+    "informacion": "La Usina del Arte es uno de los centros culturales más importantes del sur de la ciudad. El edificio industrial restaurado posee una arquitectura impactante y suele albergar conciertos, muestras y espectáculos gratuitos. Por la noche, la iluminación del edificio crea una atmósfera muy special. Es una excelente opción para explorar una cara más artística y cultural de Buenos Aires.",
+    "imagen": "usina-del-arte.jpg",
     "imagenes_referencia": [
       "fachada iluminada",
       "sala de conciertos",
@@ -312,6 +320,7 @@
       "Ideal para fotografía"
     ],
     "informacion": "Caminito conserva su identidad colorida y artística incluso durante la noche. Muchos restaurantes y espacios de tango continuan abiertos, ofreciendo música en vivo y espectáculos callejeros. Las luces sobre las fachadas pintadas generan una estética muy distinta al ambiente diurno. Conviene recorrerlo dentro de horarios concurridos y zonas transitadas.",
+    "imagen": "caminito.jpg",
     "imagenes_referencia": [
       "casas coloridas",
       "espectáculos de tango",
@@ -348,6 +357,7 @@
       "Visitar cafés de la zona"
     ],
     "informacion": "Parque Centenario es uno de los espacios verdes más importantes del centro geográfico de Buenos Aires. Durante la noche, el movimiento se traslada hacia las avenidas cercanas llenas de bares y restaurantes modernos. La zona mezcla estudiantes, familias y grupos de amigos en un ambiente relajado. También es una alternativa interesante fuera de los circuitos turísticos tradicionales.",
+    "imagen": "parque-centenario.jpg",
     "imagenes_referencia": [
       "parque nocturno",
       "bares cercanos",
@@ -383,6 +393,7 @@
       "Recorrer la plaza iluminada por la noche"
     ],
     "informacion": "Un clásico indiscutible de la noche porteña. La Biela es un Bar Notable que ofrece una experiencia tradicional con hermosas vistas a Plaza Francia. Es un punto de partida perfecto para un paseo nocturno elegante, rodeado de arquitectura de estilo francés y monumentos históricos.",
+    "imagen": "plaza-francia.jpg",
     "imagenes_referencia": [
       "terraza iluminada",
       "café histórico",
@@ -418,6 +429,7 @@
       "Disfrutar del show en vivo"
     ],
     "informacion": "Esquina histórica declarada Sitio de Interés Cultural por la Ciudad. Representa a la perfección la esencia del tango y la vida bohemia de Boedo durante la noche, ofreciendo cenas con shows que capturan el espíritu nostálgico del barrio.",
+    "imagen": "homero-manzi.jpg",
     "imagenes_referencia": [
       "show de tango en vivo",
       "esquina tradicional iluminada",
@@ -453,6 +465,7 @@
       "Ir en grupo para compartir platos"
     ],
     "informacion": "Un polo gastronómico único y en constante crecimiento que cobra vida de noche con luces de neón y los aromas de auténticos restaurantes coreanos. Es un destino turístico emergente, excelente para quienes buscan sumergirse en la cultura asiática sin salir de Buenos Aires.",
+    "imagen": "barrio-coreano.jpg",
     "imagenes_referencia": [
       "luces de neón",
       "barbacoa coreana",
@@ -488,6 +501,7 @@
       "Ideal para llevar cámara fotográfica"
     ],
     "informacion": "La Torre Espacial, cuando se habilita en horario vespertino y nocturno durante eventos, ofrece la vista panorámica más alta de toda la ciudad. El predio se ilumina y se transforma en un escenario vibrante para festivales ocasionales y turismo alternativo.",
+    "imagen": "torre-monumental.jpg",
     "imagenes_referencia": [
       "torre iluminada",
       "vista panorámica nocturna",
@@ -523,6 +537,7 @@
       "Comer una porción de parado en el mostrador"
     ],
     "informacion": "Una verdadera institución de la vida nocturna en Mataderos. Mantiene vivo el espíritu rústico y auténtico del barrio porteño, siendo una parada obligatoria para los turistas que buscan probar la legendaria pizza de molde argentina en horario de madrugada.",
+    "imagen": "pizzeria-cedron.jpg",
     "imagenes_referencia": [
       "fachada tradicional de noche",
       "pizza al molde",
@@ -558,6 +573,7 @@
       "Visitar las cervecerías artesanales de la zona"
     ],
     "informacion": "Es un nuevo y atractivo foco nocturno en el oeste de la ciudad. El bulevar arbolado se transforma de noche con luces de guirnaldas y modernas cervecerías al aire libre, siendo el lugar ideal para vivir la noche urbana fuera del típico circuito céntrico.",
+    "imagen": "polo-gastronomico-falcon.jpg",
     "imagenes_referencia": [
       "bulevar con guirnaldas de luces",
       "mesas al aire libre",
@@ -593,6 +609,7 @@
       "Conocer las reconocidas vinotecas de la zona"
     ],
     "informacion": "Conocido popularmente como 'el jardín de la ciudad', Devoto ofrece una propuesta nocturna premium alrededor de la imponente Plaza Arenales. Mezcla restaurantes de autor, bares modernos y una iluminación muy cuidada bajo las amplias copas de sus árboles centenarios.",
+    "imagen": "plaza-arenales.jpg",
     "imagenes_referencia": [
       "plaza iluminada de noche",
       "restaurantes de autor",
@@ -628,6 +645,7 @@
       "Disfrutar de la excelente coctelería"
     ],
     "informacion": "El 'DoHo' es uno de los distritos más nuevos y vibrantes de la noche porteña. Combina de forma excelente la arquitectura contemporánea, murales de arte urbano y una oferta gastronómica que marca tendencia, atrayendo a un público joven de diversos puntos turísticos.",
+    "imagen": "corredor-Doho.jpg",
     "imagenes_referencia": [
       "arquitectura moderna nocturna",
       "bares de diseño",
@@ -663,6 +681,7 @@
       "Explorar la calle Jorge Newbery"
     ],
     "informacion": "La instalación del estadio Movistar Arena transformó e impulsó por completo la vida nocturna de la zona. A la salida de los conciertos, el público se dispersa rápidamente por las modernas vermuterías y bares de diseño de Chacarita, consolidando un efervescente circuito cultural y gastronómico.",
+    "imagen": "movistar-arena.png",
     "imagenes_referencia": [
       "estadio iluminado",
       "vermuterías llenas",
