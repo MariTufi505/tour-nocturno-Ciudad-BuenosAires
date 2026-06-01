@@ -534,18 +534,11 @@ function buildMap() {
    FILTROS Y BÚSQUEDA
    ============================================================ */
 function getFilteredLugares() {
-  return LUGARES.filter((l) => {
-    const matchFiltro =
-      STATE.filtro === "todos" || l.categoria === STATE.filtro;
-    const q = STATE.searchQuery.toLowerCase();
-    return (
-      matchFiltro &&
-      (!q ||
-        l.nombre.toLowerCase().includes(q) ||
-        l.barrio.toLowerCase().includes(q) ||
-        (l.zona_comuna || "").toLowerCase().includes(q))
-    );
-  });
+  return filterPlaces(
+    LUGARES,
+    STATE.filtro,
+    STATE.searchQuery
+  );
 }
 
 function buildFilters() {

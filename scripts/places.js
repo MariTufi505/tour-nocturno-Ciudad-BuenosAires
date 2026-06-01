@@ -5,6 +5,54 @@ const URL_JSON = '/data/places.json';
 // Obtenemos los favoritos del localStorage o inicializamos un array vacío
 let favoritos = JSON.parse(localStorage.getItem('lugaresFavoritos')) || [];
 let datosLugares = []; // Array donde se guardarán los objetos del JSON
+let contenedorPlacesGlobal = null;
+// Estado de filtros para Places
+const placesState = {
+    filtro: 'todos',
+    searchQuery: '',
+};
+
+const PLACE_FILTER_GROUPS = {
+  cultura: [
+    "Teatro / Cultura",
+    "Avenida Cultural",
+    "Ciencia / Cultura",
+    "Centro Cultural",
+  ],
+
+  gastronomia: [
+    "Tango / Gastronomía",
+    "Gastronomía / Cultura",
+    "Gastronomía / Histórica",
+    "Gastronomía Exótica",
+    "Gastronomía Clásica",
+    "Bares / Gastronomía",
+    "Polo Gastronómico / Paseo",
+    "Entretenimiento / Gastronomía",
+    "Gastronomía Moderna / Vida Nocturna",
+  ],
+
+  naturaleza: [
+    "Espacio Verde",
+  ],
+
+  historicos: [
+    "Turismo Histórico",
+    "Gastronomía / Histórica",
+  ],
+
+  nocturnos: [
+    "Vida Nocturna",
+    "Gastronomía Moderna / Vida Nocturna",
+    "Bares / Gastronomía",
+  ],
+
+  paseos: [
+    "Paseo Urbano",
+    "Mirador / Paseo Urbano",
+    "Polo Gastronómico / Paseo",
+  ],
+};
 
 // Creamos la "mini ventana" (tooltip) y la agregamos al body
 // Variable global para el tooltip
@@ -39,8 +87,36 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (contenedorPlaces) {
+    contenedorPlacesGlobal = contenedorPlaces;
     cargarDatos(contenedorPlaces);
     }
+
+    const filterLinks = document.querySelectorAll('.filter-list__link');
+
+filterLinks.forEach((link) => {
+    link.addEventListener('click', (e) => {
+        e.preventDefault();
+
+        const filtroSeleccionado = link.dataset.filter;
+
+        if (placesState.filtro === filtroSeleccionado) {
+            placesState.filtro = 'todos';
+        } else {
+            placesState.filtro = filtroSeleccionado;
+        }
+
+        filterLinks.forEach((l) => {
+            l.classList.toggle(
+                'filter-list__link--active',
+                l.dataset.filter === placesState.filtro
+            );
+        });
+
+        if (contenedorPlacesGlobal) {
+            renderizarPlacesFiltrados(contenedorPlacesGlobal);
+        }
+    });
+});
 });
 
 // ==========================================
@@ -55,14 +131,37 @@ async function cargarDatos(contenedor) {
         
         datosLugares = await respuesta.json();
 
-        if (contenedor.id === 'contenedor-cards-places' && typeof iniciarPaginacionPlaces === 'function') {
-            iniciarPaginacionPlaces(datosLugares, contenedor);
+        if (contenedor.id === 'contenedor-cards-places') {
+            renderizarPlacesFiltrados(contenedor);
         } else {
             renderizarCards(datosLugares, contenedor);
         }
     } catch (error) {
         console.error("Hubo un problema con la petición Fetch:", error);
         contenedor.innerHTML = '<p>Error al cargar los lugares. Verifica que places.json exista y sea válido.</p>';
+    }
+}
+
+function renderizarPlacesFiltrados(contenedor) {
+    const lugaresFiltrados = window.filterPlaces(
+        datosLugares,
+        placesState.filtro,
+        placesState.searchQuery,
+        PLACE_FILTER_GROUPS
+    );
+
+    if (typeof iniciarPaginacionPlaces === 'function') {
+        iniciarPaginacionPlaces(lugaresFiltrados, contenedor);
+    } else {
+        renderizarCards(lugaresFiltrados, contenedor);
+    }
+}
+
+function cambiarFiltroPlaces(filtro) {
+    placesState.filtro = filtro;
+
+    if (contenedorPlacesGlobal) {
+        renderizarPlacesFiltrados(contenedorPlacesGlobal);
     }
 }
 

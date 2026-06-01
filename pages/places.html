@@ -62,26 +62,36 @@
           </h1>
           <p class="places-explorer__subtitle">Una selección que forma parte de la identidad de la ciudad.</p>
         </header>
- 
+
+        <p class="places-explorer__count" id="placesCount" aria-live="polite">
+          Buscando lugares...
+        </p>
         <!-- Filtros -->
         <nav class="places-explorer__filters" aria-label="Filtrar por categoría">
-          <ul class="filter-list">
-            <li class="filter-list__item"><a class="filter-list__link filter-list__link--active" href="#" aria-current="true">Todos</a></li>
-            <li class="filter-list__item"><a class="filter-list__link" href="#">Cafeterías</a></li>
-            <li class="filter-list__item"><a class="filter-list__link" href="#">Librerías</a></li>
-            <li class="filter-list__item"><a class="filter-list__link" href="#">Jardines</a></li>
-            <li class="filter-list__item"><a class="filter-list__link" href="#">Arte</a></li>
-            <li class="filter-list__item"><a class="filter-list__link" href="#">Históricos</a></li>
-            <li class="filter-list__item"><a class="filter-list__link" href="#">Nocturnos</a></li>
+          <ul class="filter-list" id="places-filter-list">
+            <li class="filter-list__item">
+            <a class="filter-list__link" href="#" data-filter="cultura">🎭 Cultura</a>
+            </li>
+            <li class="filter-list__item">
+            <a class="filter-list__link" href="#" data-filter="gastronomia">🍽️ Gastronomía</a>
+            </li>
+            <li class="filter-list__item">
+            <a class="filter-list__link" href="#" data-filter="naturaleza">🌿 Naturaleza</a>
+            </li>
+            <li class="filter-list__item">
+            <a class="filter-list__link" href="#" data-filter="historicos">🏛️ Históricos</a>
+            </li>
+            <li class="filter-list__item">
+            <a class="filter-list__link" href="#" data-filter="nocturnos">🌙 Nocturnos</a>
+            </li>
+            <li class="filter-list__item">
+            <a class="filter-list__link" href="#" data-filter="paseos">🚶 Paseos</a>
+            </li>
           </ul>
           <button class="filters-button" type="button" aria-label="Abrir filtros avanzados">
             &#9965; Filtros
           </button>
         </nav>
- 
-        <p class="places-explorer__count" id="placesCount" aria-live="polite">
-          Cargando lugares...
-        </p>
 
         <nav class="places-pagination places-pagination--top" aria-label="Paginación de lugares">
           <button class="places-pagination__btn" id="prevPageTop" type="button">← Anterior</button>
@@ -106,10 +116,12 @@
         &copy; <time datetime="2026">2026</time> Secretos de la Ciudad
       </p>
     </footer>
-    <script src="../scripts/places.js"></script>
+    <script src="../scripts/search-bar.js"></script>
+    <script src="../scripts/place-filters.js"></script>
     <script src="../scripts/places-pagination.js"></script>
     <script src="../scripts/places-modal.js"></script>
-    <script src="../scripts/search-bar.js"></script>
+    <script src="../scripts/places.js"></script>
+    
 
     <div class="place-modal" id="placeModal">
     <div class="place-modal__content" id="placeModalContent"></div>

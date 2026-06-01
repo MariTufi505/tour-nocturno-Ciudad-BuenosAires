@@ -46,6 +46,7 @@
 .filter-list {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: var(--space-3);
 }
 
@@ -67,11 +68,18 @@
     transform var(--transition-base);
 }
 
-.filter-list__link:hover,
-.filter-list__link--active {
+.filter-list__link:hover {
   color: var(--color-text);
   background: var(--color-purple-soft);
   border-color: rgba(124, 58, 237, 0.45);
+  transform: translateY(-2px);
+}
+
+.filter-list__link--active {
+  color: var(--color-text);
+  background: rgba(124, 58, 237, 0.28);
+  border-color: rgba(124, 58, 237, 0.8);
+  box-shadow: 0 0 18px rgba(124, 58, 237, 0.22);
   transform: translateY(-2px);
 }
 
@@ -80,9 +88,12 @@
 }
 
 .places-explorer__count {
-  margin-bottom: var(--space-5);
-  color: var(--color-text-faint);
-  font-size: var(--text-sm);
+  max-width: 980px;
+  margin: 2rem auto 1rem;
+  padding-left: 0;
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+  font-weight: 400;
 }
 
 .place-list {
