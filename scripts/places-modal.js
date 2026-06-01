@@ -6,14 +6,13 @@ function abrirModal(lugar) {
     contenido.innerHTML = `
         <article class="place-detail">
             <button class="place-detail__close">×</button>
-
+        
+            <figure class="place-detail__image">
             <button class="place-detail__favorite">
             ${favoritos.includes(lugar.id)
                 ? '❤️ En favoritos'
                 : '♡ Agregar a favoritos'}
             </button>
-
-            <figure class="place-detail__image">
                 <img
                     src="${imagenLugar}"
                     alt="${lugar.nombre}"
@@ -26,11 +25,11 @@ function abrirModal(lugar) {
 
                 <p>${lugar.informacion}</p>
 
-                <p><strong>Horario:</strong> ${lugar.horarios_nocturnos}</p>
-
-                <p><strong>Precio:</strong> ${lugar.precio}</p>
-
-                <p><strong>Ubicación:</strong> ${lugar.ubicacion_exacta}</p>
+                <div class="place-detail__meta">
+                    <p><strong>Horario:</strong> ${lugar.horarios_nocturnos}</p>
+                    <p><strong>Precio:</strong> ${lugar.precio}</p>
+                    <p><strong>Ubicación:</strong> ${lugar.ubicacion_exacta}</p>
+                </div>
             </div>
         </article>
     `;
