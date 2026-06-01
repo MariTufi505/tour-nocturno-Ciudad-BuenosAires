@@ -1,19 +1,27 @@
 function abrirModal(lugar) {
-    const modal = document.getElementById('placeModal');
-    const contenido = document.getElementById('placeModalContent');
+  const modal = document.getElementById("placeModal");
+  const contenido = document.getElementById("placeModalContent");
 
-    contenido.innerHTML = `
+  // Imagen del modal — usa el mismo mapeo que las cards
+  const rutaImagen = obtenerImagenLugar(lugar);
+  const imgModalHTML = rutaImagen
+    ? `<img src="${rutaImagen}" alt="${lugar.nombre}" style="width:100%;height:100%;object-fit:cover;display:block;">`
+    : "";
+
+  contenido.innerHTML = `
         <article class="place-detail">
             <button class="place-detail__close">×</button>
 
             <button class="place-detail__favorite">
-            ${favoritos.includes(lugar.id)
-                ? '❤️ En favoritos'
-                : '♡ Agregar a favoritos'}
+            ${
+              favoritos.includes(lugar.id)
+                ? "❤️ En favoritos"
+                : "♡ Agregar a favoritos"
+            }
             </button>
 
             <div class="place-detail__image">
-                Imagen
+                ${imgModalHTML}
             </div>
 
             <div class="place-detail__info">
@@ -30,21 +38,20 @@ function abrirModal(lugar) {
         </article>
     `;
 
-    modal.classList.add('place-modal--open');
-    console.log('modal abierto');
+  modal.classList.add("place-modal--open");
+  console.log("modal abierto");
 
-    const btnCerrar = contenido.querySelector('.place-detail__close');
-    btnCerrar.addEventListener('click', cerrarModal);
+  const btnCerrar = contenido.querySelector(".place-detail__close");
+  btnCerrar.addEventListener("click", cerrarModal);
 
-    const btnFavoritoModal = contenido.querySelector('.place-detail__favorite');
-    btnFavoritoModal.addEventListener('click', () => {
+  const btnFavoritoModal = contenido.querySelector(".place-detail__favorite");
+  btnFavoritoModal.addEventListener("click", () => {
     manejarFavorito(lugar.id, btnFavoritoModal);
-});
-    
+  });
 }
 
 function cerrarModal() {
-    console.log('modal cerrado');
-    const modal = document.getElementById('placeModal');
-    modal.classList.remove('place-modal--open');
+  console.log("modal cerrado");
+  const modal = document.getElementById("placeModal");
+  modal.classList.remove("place-modal--open");
 }
