@@ -87,3 +87,49 @@
 .place-detail__meta p {
   margin: 0;
 }
+
+
+/*Responsive*/
+@media (max-width: 768px) {
+  .place-modal {
+    padding: 1rem;
+  }
+
+  .place-modal__content {
+    width: 100%;
+    max-height: 90vh;
+    padding: 1rem;
+  }
+
+  .place-detail {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  .place-detail__img {
+    max-height: 280px;
+    border-radius: 1rem;
+  }
+
+  .place-detail__favorite {
+    top: 0.75rem;
+    left: 0.75rem;
+  }
+
+  .place-detail__close {
+    top: 0.75rem;
+    right: 0.75rem;
+    font-size: 1.6rem;
+    z-index: 10;
+  }
+
+  .place-detail__info h2 {
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .place-detail__info {
+  font-size: 0.92rem;
+  line-height: 1.6;
+}
+}
