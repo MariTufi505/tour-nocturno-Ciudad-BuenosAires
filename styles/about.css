@@ -449,6 +449,23 @@
     padding-inline: var(--space-4);
   }
 
+  .about__header {
+    max-width: 100%;
+    gap: var(--space-5);
+  }
+
+  .about__title {
+    max-width: 12ch;
+    margin-inline: auto;
+  }
+
+  .about__description {
+    max-width: 28ch;
+    margin-inline: auto;
+    font-size: 1rem;
+    line-height: 1.9;
+  }
+
   .team,
   .tech-stack {
     padding-inline: var(--space-4);
