@@ -445,3 +445,48 @@ address {
 ::-webkit-scrollbar-track  { background: var(--color-bg); }
 ::-webkit-scrollbar-thumb  { background: rgba(124, 58, 237, 0.4); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--color-purple); }
+
+
+/* ────────────────────────────────────────────────────────────
+   MEDIA QUERIES (responsive)
+   ──────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  :root {
+    --header-h: 60px;
+  }
+
+  .site-header {
+    height: auto;
+    min-height: var(--header-h);
+    padding: 0.75rem 1rem;
+    gap: 0.75rem;
+  }
+
+  .brand__name {
+    display: none;
+  }
+
+  .main-nav {
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .main-nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .main-nav__list {
+    gap: 0;
+    min-width: max-content;
+  }
+
+  .main-nav__link {
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--text-xs);
+    white-space: nowrap;
+  }
+
+  .site-search {
+    display: none;
+  }
+}
