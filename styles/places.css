@@ -210,12 +210,12 @@
 
   .filter-list__link {
   width: 100%;
-  
   }
 
   .places-pagination--top {
   justify-content: center;
   }
+  
   .places-page .place-list {
     display: grid;
     grid-template-columns: 1fr;
