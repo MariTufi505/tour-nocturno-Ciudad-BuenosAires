@@ -87,23 +87,32 @@ function showNeighborhoodPanel(barrio, lugaresBarrio) {
   document.getElementById("panel-addr-text").textContent =
     "Seleccioná un lugar para ver sus detalles.";
 
-  document.getElementById("panel-desc").innerHTML = lugaresBarrio
-    .map((lugar) => {
-      const cfg = catOf(lugar.categoria);
+const listadoLugares = lugaresBarrio.length
+  ? lugaresBarrio
+      .map((lugar) => {
+        const cfg = catOf(lugar.categoria);
 
-      return `
-        <button class="panel-place-option" type="button" data-id="${lugar.id}">
-          <span class="panel-place-option__icon" style="color:${cfg.color}">
-            ${cfg.icon}
-          </span>
-          <span>
-            <strong>${lugar.nombre}</strong>
-            <small>${lugar.categoria}</small>
-          </span>
-        </button>
-      `;
-    })
-    .join("");
+        return `
+          <button class="panel-place-option" type="button" data-id="${lugar.id}">
+            <span class="panel-place-option__icon" style="color:${cfg.color}">
+              ${cfg.icon}
+            </span>
+            <span>
+              <strong>${lugar.nombre}</strong>
+              <small>${lugar.categoria}</small>
+            </span>
+          </button>
+        `;
+      })
+      .join("")
+  : `
+      <p class="panel__empty-message">
+        🌙 Zona en exploración.<br>
+        Pronto agregaremos nuevos secretos en este barrio.
+      </p>
+    `;
+
+document.getElementById("panel-desc").innerHTML = listadoLugares;
 
   document.querySelector(".panel__meta").style.display = "none";
   document.getElementById("panel-recs").innerHTML = "";

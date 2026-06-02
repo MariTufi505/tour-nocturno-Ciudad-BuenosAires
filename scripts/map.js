@@ -340,8 +340,6 @@ function buildMap() {
         (lugar) => lugar.barrio === barrio.nombre
     );
 
-    if (!lugaresBarrio.length) return;
-
     STATE.selectedId = null;
 
     document.querySelectorAll(".marker-g").forEach((marker) => {
@@ -350,7 +348,9 @@ function buildMap() {
         (lugar) => lugar.id === markerId
       );
 
-    marker.style.opacity = perteneceAlBarrio ? "1" : "0.25";
+    marker.style.opacity = lugaresBarrio.length
+    ? perteneceAlBarrio ? "1" : "0.25"
+    : "0.35";
   });
 
   showNeighborhoodPanel(barrio.nombre, lugaresBarrio);
