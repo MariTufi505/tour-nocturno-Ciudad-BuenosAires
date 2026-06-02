@@ -52,6 +52,8 @@ Otro aprendizaje relevante fue que, en ocasiones, "menos es más": un prompt esp
 
 Marilyn Pamela Tufillaro: Una de las partes que puedo explicar es about.css. El archivo HTML al que corresponde (about.html) utiliza diferentes secciones divididas en elementos con clases, que son las que se tienen en cuenta a la hora de aplicar estilos. En about.css se encuentran propiedades como width, font y padding, entre otras, que modifican cada elemento según los valores asignados. Este archivo toma como base global.css, que declara las variables y valores compartidos por todo el sitio, garantizando un estilo visual coherente en todas las páginas. De la misma manera que about.html tiene su propia hoja de estilo, lo mismo ocurre con los demás archivos HTML (places, map), cada uno con su CSS correspondiente.
 
+Axel Figueredo: Unas de las partes que puedo explicar es el map.js. Este código implementa Gráficos Vectoriales Redimensionables interactiva (SVG) y JavaScript. El script utiliza funciones matemáticas de proyección como "coordsToPath" para convertir coordenadas geográficas del GeoCaba.json (latitud/longitud) a coordenadas de píxeles dentro de un contenedor SVG, facilitando la ubicación precisa de cada punto. Construye el mapa mediante capas independientes (rellenos, bordes, etiquetas y marcadores) e implementa controles de zoom y desplazamiento (pan). Procesa automáticamente los datos de entrada para agrupar barrios por comunas y asignar colores únicos a cada categoría de lugar, Incluye funcionalidades para filtrar lugares por categoría. y gestionar una lista de favoritos almacenada localmente en el navegador del usuario.
+
 ---
 
 ## ¿Qué decisiones tomó el grupo sin depender de la IA?
