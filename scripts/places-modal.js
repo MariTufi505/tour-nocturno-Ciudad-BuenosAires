@@ -39,7 +39,7 @@ function abrirModal(lugar) {
 
     modal.classList.add('place-modal--open');
     modal.setAttribute('aria-hidden', 'false');
-    
+    document.addEventListener('keydown', cerrarConEscape);
     console.log('modal abierto');
 
     const btnCerrar = contenido.querySelector('.place-detail__close');
@@ -57,4 +57,11 @@ function cerrarModal() {
     const modal = document.getElementById('placeModal');
     modal.classList.remove('place-modal--open');
     modal.setAttribute('aria-hidden', 'true');
+    document.removeEventListener('keydown', cerrarConEscape);
+}
+
+function cerrarConEscape(e) {
+    if (e.key === 'Escape') {
+        cerrarModal();
+    }
 }

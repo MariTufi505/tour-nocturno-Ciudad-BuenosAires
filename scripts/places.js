@@ -95,8 +95,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 filterLinks.forEach((link) => {
     link.addEventListener('click', (e) => {
-        e.preventDefault();
-
         const filtroSeleccionado = link.dataset.filter;
 
         if (placesState.filtro === filtroSeleccionado) {
@@ -106,10 +104,10 @@ filterLinks.forEach((link) => {
         }
 
         filterLinks.forEach((l) => {
-            l.classList.toggle(
-                'filter-list__link--active',
-                l.dataset.filter === placesState.filtro
-            );
+            const isActive = l.dataset.filter === placesState.filtro;
+
+            l.classList.toggle('filter-list__link--active', isActive);
+            l.setAttribute('aria-pressed', isActive ? 'true' : 'false');
         });
 
         if (contenedorPlacesGlobal) {
