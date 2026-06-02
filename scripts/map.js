@@ -335,6 +335,27 @@ function buildMap() {
     );
     fill.addEventListener("mousemove", moveBarrioTooltip);
     fill.addEventListener("mouseleave", hideBarrioTooltip);
+    fill.addEventListener("click", () => {
+      const lugaresBarrio = LUGARES.filter(
+        (lugar) => lugar.barrio === barrio.nombre
+    );
+
+    if (!lugaresBarrio.length) return;
+
+    STATE.selectedId = null;
+
+    document.querySelectorAll(".marker-g").forEach((marker) => {
+      const markerId = Number(marker.dataset.id);
+      const perteneceAlBarrio = lugaresBarrio.some(
+        (lugar) => lugar.id === markerId
+      );
+
+    marker.style.opacity = perteneceAlBarrio ? "1" : "0.25";
+  });
+
+  showNeighborhoodPanel(barrio.nombre, lugaresBarrio);
+});
+
     gFills.appendChild(fill);
 
     gBorders.appendChild(
@@ -837,6 +858,14 @@ function selectPlace(id) {
 
 function showPanel(lugar) {
   if (!lugar) return;
+document.getElementById("panel-desc").innerHTML = "";
+document.querySelector(".panel__meta").style.display = "";
+document.querySelector(".panel__footer").style.display = "";
+
+document.querySelectorAll(".panel__section-title").forEach((title) => {
+  title.style.display = "";
+});
+
   const cfg = catOf(lugar.categoria);
   const hero = document.getElementById("panel-hero");
   hero.style.background = `linear-gradient(135deg, ${cfg.color}30, ${cfg.color}0a)`;
@@ -875,6 +904,75 @@ function showPanel(lugar) {
   document.getElementById("panel-content").style.display = "flex";
 
   const panel = document.getElementById("detail-panel");
+  panel.classList.add("open");
+  panel.removeAttribute("aria-hidden");
+  document.getElementById("panel-close").focus();
+  panel.addEventListener("keydown", trapFocus);
+}
+
+function showNeighborhoodPanel(barrio, lugaresBarrio) {
+  const panel = document.getElementById("detail-panel");
+  const hero = document.getElementById("panel-hero");
+
+  hero.style.background =
+    "linear-gradient(135deg, rgba(124, 58, 237, 0.24), rgba(124, 58, 237, 0.06))";
+  hero.style.borderBottom = "1px solid rgba(124, 58, 237, 0.3)";
+
+  document.getElementById("panel-icon").textContent = "📍";
+  document.getElementById("panel-barrio-label").textContent = "Barrio";
+  document.getElementById("panel-barrio-label").style.color = "var(--color-purple)";
+
+  document.getElementById("panel-cat").textContent =
+    `${lugaresBarrio.length} lugar${lugaresBarrio.length === 1 ? "" : "es"} encontrados`;
+  document.getElementById("panel-cat").style.color = "var(--color-purple)";
+
+  document.getElementById("panel-name").textContent = barrio;
+  document.getElementById("panel-addr-text").textContent =
+    "Seleccioná un lugar para ver sus detalles.";
+
+  document.getElementById("panel-desc").innerHTML = lugaresBarrio
+    .map((lugar) => {
+      const cfg = catOf(lugar.categoria);
+
+      return `
+        <button class="panel-place-option" type="button" data-id="${lugar.id}">
+          <span class="panel-place-option__icon" style="color:${cfg.color}">
+            ${cfg.icon}
+          </span>
+          <span>
+            <strong>${lugar.nombre}</strong>
+            <small>${lugar.categoria}</small>
+          </span>
+        </button>
+      `;
+    })
+    .join("");
+
+  document.querySelector(".panel__meta").style.display = "none";
+  document.getElementById("panel-recs").innerHTML = "";
+  document.getElementById("panel-tags").innerHTML = "";
+
+  document.querySelectorAll(".panel__section-title").forEach((title) => {
+    title.style.display = "none";
+  });
+
+  document.getElementById("panel-empty").style.display = "none";
+  document.getElementById("panel-content").style.display = "flex";
+  document.querySelector(".panel__footer").style.display = "none";
+
+  document.querySelectorAll(".panel-place-option").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      document.querySelector(".panel__meta").style.display = "";
+      document.querySelector(".panel__footer").style.display = "";
+
+      document.querySelectorAll(".panel__section-title").forEach((title) => {
+        title.style.display = "";
+      });
+
+      selectPlace(Number(btn.dataset.id));
+    });
+  });
+
   panel.classList.add("open");
   panel.removeAttribute("aria-hidden");
   document.getElementById("panel-close").focus();
