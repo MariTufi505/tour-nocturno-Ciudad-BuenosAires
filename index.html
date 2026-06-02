@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lugares</title>
+    <title>Secretos de la Ciudad | Inicio</title>
     <link rel="stylesheet" href="./styles/global.css">
     <link rel="stylesheet" href="./styles/hero.css">
     <link rel="stylesheet" href="./styles/carousel.css">
@@ -27,8 +27,8 @@
     <nav class="main-nav" aria-label="Navegación principal">
       
       <ul class="main-nav__list">
-        <li><a href="#" class="main-nav__link main-nav__link--active" aria-current="page">Inicio</a></li>
-<li><a href="pages/places.html" class="main-nav__link">Explorar</a></li>
+        <li><a href="index.html" class="main-nav__link main-nav__link--active" aria-current="page">Inicio</a></li>
+        <li><a href="pages/places.html" class="main-nav__link">Explorar</a></li>
         <li><a href="pages/map.html" class="main-nav__link">Mapa</a></li>
         <li><a href="pages/about.html" class="main-nav__link">Sobre nosotros</a></li>
       </ul>
@@ -89,7 +89,7 @@
           <img
             class="hero__card-image"
             src="./assets/images/caminito.jpg"
-            alt="Calle nocturna en Buenos Aires">
+            alt="Vista nocturna de esquina emblemática de Caminito, La Boca, Buenos Aires">
           
           <figcaption class="hero__card-info">
             <svg class="hero__card-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="14" height="14" aria-hidden="true">
@@ -138,7 +138,13 @@
     
   </main>
   
- <div class="place-modal" id="placeModal">
+    <div
+      class="place-modal"
+      id="placeModal"
+      role="dialog"
+      aria-modal="true"
+      aria-hidden="true"
+    >
       <div class="place-modal__content" id="placeModalContent"></div>
     </div>
   <!-- ===== FOOTER ===== -->

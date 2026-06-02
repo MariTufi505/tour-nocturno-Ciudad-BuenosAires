@@ -5,7 +5,10 @@ function abrirModal(lugar) {
 
     contenido.innerHTML = `
         <article class="place-detail">
-            <button class="place-detail__close">×</button>
+            <button 
+                class="place-detail__close"
+                aria-label="Cerrar detalle del lugar"
+            >×</button>
         
             <figure class="place-detail__image">
             <button class="place-detail__favorite">
@@ -35,6 +38,8 @@ function abrirModal(lugar) {
     `;
 
     modal.classList.add('place-modal--open');
+    modal.setAttribute('aria-hidden', 'false');
+    
     console.log('modal abierto');
 
     const btnCerrar = contenido.querySelector('.place-detail__close');
@@ -51,4 +56,5 @@ function cerrarModal() {
     console.log('modal cerrado');
     const modal = document.getElementById('placeModal');
     modal.classList.remove('place-modal--open');
+    modal.setAttribute('aria-hidden', 'true');
 }
