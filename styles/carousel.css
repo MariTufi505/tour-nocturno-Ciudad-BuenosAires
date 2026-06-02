@@ -289,6 +289,10 @@
 }
 
 @media (max-width: 768px) {
+  .featured {
+    padding: var(--space-16) 0 var(--space-20);
+  }
+
   .featured__container,
   .container {
     padding-inline: var(--space-4);
@@ -297,11 +301,17 @@
   .featured__heading {
     flex-direction: column;
     align-items: flex-start;
+    gap: var(--space-4);
+  }
+
+  .featured__title {
+    font-size: clamp(2rem, 9vw, 2.8rem);
+    line-height: 1.05;
   }
 
   .featured__grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--space-4);
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
   }
 
   .featured__carousel-btn {

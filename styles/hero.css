@@ -1,6 +1,6 @@
 .hero {
   position: relative;
-  min-height: 72vh;
+  min-height: 100vh;
   display: flex;
   align-items: center;
   overflow: hidden;
@@ -8,21 +8,6 @@
   background:
     radial-gradient(circle at 78% 35%, rgba(124, 58, 237, 0.18), transparent 28%),
     linear-gradient(135deg, #050508 0%, #0b0914 48%, #170a24 100%);
-}
-
-.hero::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 220px;
-  background: linear-gradient(
-    to bottom,
-    transparent,
-    #050508
-  );
-  z-index: 1;
 }
 
 /* Imagen de fondo */
@@ -47,9 +32,9 @@
 .hero__overlay--dark {
   background: linear-gradient(
     to bottom,
-    rgba(5, 5, 8, 0.35) 0%,
-    rgba(5, 5, 8, 0.55) 45%,
-    rgba(5, 5, 8, 0.92) 100%
+    rgba(5, 5, 8, 0.25) 0%,
+    rgba(5, 5, 8, 0.48) 45%,
+    rgba(5, 5, 8, 0.72) 100%
   );
 }
 
@@ -315,33 +300,48 @@
    ──────────────────────────────────────────────────────────── */
 @media (max-width: 768px) {
   .hero {
-    min-height: auto;
-    padding: 8rem 1.25rem 4rem;
+    min-height: 100vh;
+    padding: 9rem 1.25rem 5rem;
   }
 
   .hero__container {
+    min-height: calc(100vh - var(--header-h) - 11rem);
     grid-template-columns: 1fr;
+    place-items: center;
+    transform: none;
   }
 
   .hero__content {
-    max-width: 34rem;
+    align-items: center;
+    margin-inline: auto;
   }
 
   .hero__title {
-    font-size: clamp(2.8rem, 14vw, 4.2rem);
-    line-height: 0.95;
+    text-align: center;
+    max-width: 12ch;
   }
 
   .hero__description {
-    max-width: 22rem;
+    text-align: center;
+    margin-inline: auto;
   }
 
   .hero__actions {
-    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
   }
 
   .hero__visual {
     display: none;
+  }
+
+  .hero__btn {
+    padding: 0.9rem 1.6rem;
+    font-size: 0.95rem;
+  }
+
+  .hero__link {
+    font-size: 0.9rem;
   }
 }
 
