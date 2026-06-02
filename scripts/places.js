@@ -240,17 +240,21 @@ function renderizarCards(lugares, contenedor) {
 `;
 
         // 3. Lógica del Hover (Mini ventana)
-        card.addEventListener('mousemove', (e) => {
-            const idealParaTexto = lugar.ideal_para ? lugar.ideal_para.join(', ') : 'Todos';
-            tooltip.innerHTML = `<strong>Ideal para:</strong><br>${idealParaTexto}`;
-            tooltip.style.display = 'block';
-            tooltip.style.left = `${e.pageX + 15}px`;
-            tooltip.style.top = `${e.pageY + 15}px`;
-        });
+        const canUseTooltip = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
-        card.addEventListener('mouseleave', () => {
-            tooltip.style.display = 'none';
-        });
+        if (canUseTooltip) {
+            card.addEventListener('mousemove', (e) => {
+                const idealParaTexto = lugar.ideal_para ? lugar.ideal_para.join(', ') : 'Todos';
+                tooltip.innerHTML = `<strong>Ideal para:</strong><br>${idealParaTexto}`;
+                tooltip.style.display = 'block';
+                tooltip.style.left = `${e.pageX + 15}px`;
+                tooltip.style.top = `${e.pageY + 15}px`;
+            });
+
+            card.addEventListener('mouseleave', () => {
+                tooltip.style.display = 'none';
+            });
+    }
 
         card.addEventListener('click', (e) => {
 
